@@ -1,0 +1,76 @@
+{% extends "layouts/main.html" %}
+{% load static %}
+
+{% block content %}
+<hr>
+
+<div class="flex flex-row">
+    <div class="bg-white">
+        <div class="flex justify-between">
+            <div class="py-2 mx-4 text-lg">Filter</div>
+            <a href="{% url 'shop' %}" class="py-3 mx-4 text-blue-300">CLEAR ALL</a>
+        </div>
+        <hr>
+        <h1 class="py-2 text-sm md:text-lg font-semibold text-black cursor-auto mx-4">Category</h1>
+        {% for category_item in category %}
+            <div class="flex items-center px-2 py-1 gap-1">
+                <input type="radio" id="radioButton{{ forloop.counter }}" name="radioGroup" value="{{ category_item.name }}" onclick="select_category('{{category_item.slug}}')" {% if request.GET.category == category_item.slug %}checked{% endif %}/>
+                <label for="radioButton{{ forloop.counter }}" class="text-sm md:text-lg text-gray-500  my-1">{{ category_item.name }}</label>
+            </div>
+        {% endfor %}
+        <hr>
+        <h1 class="py-2 text-sm md:text-lg font-semibold text-black cursor-auto mx-4">Sort</h1>
+        <div class="flex items-center px-2 py-1 gap-1">
+            <input type="radio" id="radioButton_low_to_high" name="radioGroup2" value="low_to_high"  onclick="sorting('low_to_high')"  {% if request.GET.sort == 'low_to_high' %}checked{% endif %}/>
+            <label for="radioButton_low_to_high" class="text-sm md:text-lg text-gray-500  my-1">Low to High</label>
+        </div>
+        <div class="flex items-center px-2 py-1 gap-1">
+            <input type="radio" id="radioButton_high_to_low" name="radioGroup2" value="high_to_low" onclick="sorting('high_to_low')"  {% if request.GET.sort == 'high_to_low' %}checked{% endif %}/>
+            <label for="radioButton_high_to_low" class="text-sm md:text-lg text-gray-500  my-1">High to Low</label>
+        </div>
+        <div class="flex items-center px-2 py-1 gap-1">
+            <input type="radio" id="radioButton_New" name="radioGroup2" value="New" onclick="sorting('new')" {% if request.GET.sort == 'new' %}checked{% endif %} />
+            <label for="radioButton_New" class="text-sm md:text-lg text-gray-500  my-1">New</label>
+        </div>
+        <hr>
+    </div>
+
+    <div class="bg-white  grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-16 w-full ">
+        {% for product in products %}
+        <a href="{% url 'productview' pslug=product.slug vslug=product.variants.first.slug %}">
+            <div class="text-center shadow-md my-2">
+                <img src="{{ product.variants.first.cover_image.url }}" alt="Product" class="h-20 w-20 md:h-72 md:w-64 object-cover rounded-t-xl mx-auto" />
+                <h1 class="text-sm md:text-lg font-bold my-1">{{ product.name }}</h1>
+                <div class="flex items-center justify-center">
+                    <p class="text-sm md:text-lg font-semibold text-black cursor-auto my-2"> ₹ {{ product.variants.first.selling_price }}</p>
+                    <del>
+                        <p class="text-xs md:text-sm text-gray-600 cursor-auto ml-1"> ₹ {{ product.variants.first.orginal_price }}</p>
+                    </del>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    
+</div>
+    
+</div>
+
+<script>
+    let currentUrl = new URL(window.location.href);
+    let urlparams = new URLSearchParams(currentUrl.search);
+
+    function sorting(sortby) {
+        urlparams.set('sort', sortby);
+        currentUrl.search = urlparams.toString();
+        window.location.href = currentUrl.toString();
+    }
+
+    function select_category(categoryby)  {
+        urlparams.set('category', categoryby);
+        currentUrl.search = urlparams.toString();
+        window.location.href = currentUrl.toString();
+    }
+</script>
+
+{% endblock content %}

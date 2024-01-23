@@ -1,0 +1,669 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% csrf_token %}
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+<style>
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+  padding: 16px; /* Adjust the padding as needed */
+}
+.card:hover {
+    transform: translateY(-4px);
+}
+.address-details p {
+    margin-bottom: 8px;
+}
+
+.buttons button {
+    margin-right: 8px;
+
+}
+
+</style>
+<hr>
+<div class=" bg-white grid sm:px-10 lg:grid-cols-2 py-3 lg:px-20 xl:px-32">
+  <div class="space-y-3 rounded-lg border-2 px-2 py-4 sm:px-6">
+    {% for item in cart_items %}
+    <div class="flex flex-row items-center">
+      <img class="m-2 h-18 w-20 rounded-md border object-cover object-center" src="{{ item.variant.cover_image.url }}" alt="img" />
+      <div class="md:flex flex-row gap-8 ml-2">
+        <span class="font-semibold text-sm">{{ item.variant.color}}</span>
+        <input class="border text-center h-8 w-8" type="text" value="{{ item.variant_qty }}">
+        <p class="text-md font-bold"> ₹{{ item.variant.selling_price}}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class=" my-2 p-4">
+    <button type="button" id="open-modal" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="openModal()"> Add Address </button>
+    <button id="openModal" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" type="button">Change</button>
+
+    <form action="{% url 'placeorder' %}" id="orderform" method="POST">
+      {% csrf_token %}
+
+      <!-- Delivery Address Section -->
+      <div class="mt-10 p-4 rounded shadow mb-4">
+        <div class="flex justify-between items-center mb-3">
+          <div class="text-sm text-gray-500">
+            <span class="bg-blue-500 text-white px-2 py-1 rounded">DELIVERY ADDRESS</span>
+          </div>
+        </div>
+
+        <div id="selectedAddress"></div>
+        <input type="hidden" name="selectedAddressId" id="selectedAddressId" value="{{ user_address.first.id }}">
+      </div>
+    </div>
+      </div>
+
+                 
+                <div class="border  bg-white p-4 rounded-md">
+                  <div class="flex items-center justify-between pb-2">
+                    <h1 class="text-2xl gap">Apply Coupons</h1>
+                    <button type="button" onclick="openPromoModal()" class="border-2 bg-blue-500 hover:bg-blue-700 text-white  py-2 px-4 rounded">Select Coupon</button>
+                    
+                   
+
+
+                  </div>
+                  <hr>
+                  <div class="mt-6 border-b py-2">
+                      <div class="flex items-center justify-between">
+                          <p class="text-sm font-medium text-gray-900">Subtotal</p>
+                          <p class="font-semibold text-gray-900"> ₹ {{ cart_total }}</p>
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <p class="text-sm font-medium text-gray-900">Discount</p>
+                        <p id="discountValue" class="font-semibold text-gray-900"> ₹ {{ discount_price }}</p>
+                        <input type="hidden" name="discount_price" value="{{ discount_price }}">
+                    </div>
+                      <div class="flex items-center justify-between">
+                          <p class="text-sm font-medium text-gray-900">Shipping</p>
+                          <p class="font-semibold text-gray-400">FREE</p>
+                      </div>
+                  </div>
+          
+                  <div class="flex items-center justify-between border-b py-2">
+                    <p class="text-sm font-medium text-gray-900">Total</p>
+                    <p id="finalTotal" class="text-2xl font-semibold text-gray-900"> ₹ {{ final_price }}</p>
+                    <input type="hidden" name="finalTotal" value="{{ final_price }}">
+                </div>
+              
+                  <div class="mt-6 py-3 border-b">
+                      <h1 class="text-3xl">Payment Methods</h1>
+                  </div>
+              
+                  <div class=" flex justify-between gap-3 py-3">
+              
+                    <input type="hidden" id="payment_mode" name="payment_mode"> 
+
+
+                  
+                    <button id="pay_pal"  class="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-full">PayPal</button>
+                   
+                    <button id="cash_on_deliver" onclick="setpayment_mode('cash_on_delivery')" type="submit" class="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-full">Cash on Delivery</button>
+                      <button id="rzp-button1"  type="submit" class=" py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-full ">Razorpay</button>
+                  </div>
+                </div>
+            </div>
+            
+          </form>
+    </div>
+    </div>
+
+
+          <div class="fixed inset-0 z-50 hidden overflow-auto bg-black bg-opacity-50 flex items-center justify-center"  id="modal">
+            <div class="modal-content bg-white p-4 max-w-md mx-auto rounded shadow-lg" style="width: -moz-available;">
+              <div class="modal-header flex justify-between items-center mb-4">
+                <p class="text-xl font-medium">Address Details</p>
+                <button id="close-modal" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+            <div class="modal-body overflow-y-auto max-h-96  w-100">
+              
+
+                                  <form action="{% url 'add_address' %}" id="form1" method="post">
+                                    {% csrf_token %}
+                                    <p class="text-gray-400">Complete your order details.</p>
+
+                                    <div id="errorMessages" class="text-red-500 mt-2"></div>
+                                    <div class="mt-4">
+                                      <label for="address_type" class="block text-sm font-medium">Address Type</label>
+                                      <select name="address_type" id="address_type"
+                                          class="w-full border border-gray-200 px-4 py-2 rounded-md text-sm outline-none focus:ring focus:border-blue-500">
+                                          <option value="Home">Home</option>
+                                          <option value="Office">Office</option>
+                                      </select>
+                                  </div>
+
+                                    <label for="email" class="mt-4 mb-2 block text-sm font-medium">Address</label>
+                                    <div class="relative">
+                                    <input type="text" required id="email" name="address"  class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="Address" />
+                                    <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
+                                        
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 opacity-40">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                                        </svg>
+                                        
+                                    </div>
+                                    </div>
+
+                                    <label for="email" class="mt-4 mb-2 block text-sm font-medium">First name</label>
+                                    <div class="relative">
+                                    <input type="text" required id="first_name" name="first_name" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="first_name" /> 
+                                    <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
+                                        
+                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                      </svg>
+                                        
+                                    </div>
+                                    </div>
+
+                                    <label for="email" class="mt-4 mb-2 block text-sm font-medium">last name</label>
+                                    <div class="relative">
+                                    <input type="text" required id="last_name" name="last_name" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="last_name" />
+                                    <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
+                                        
+                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                      </svg>
+                                        
+                                    </div>
+                                    </div>
+
+                                    <label for="email" class="mt-4 mb-2 block text-sm font-medium">city</label>
+                                    <div class="relative">
+                                    <input type="text" required id="city" name="city" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="city" />
+                                    <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
+                                        
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 opacity-40">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                                        </svg>
+                                        
+                                    </div>
+                                    </div>
+
+                                    <label for="email" class="mt-4 mb-2 block text-sm font-medium">state</label>
+                                    <div class="relative">
+                                    <input type="text" required id="state" name="state" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="state" />
+                                    <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
+                                        
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 opacity-40">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                                        </svg>
+                                        
+                                    </div>
+                                    </div>
+
+
+                                    <label for="number" class="mt-4 mb-2 block text-sm font-medium">number</label>
+                                    <div class="relative">
+                                    <input type="text" required id="number" name="phone_number" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="number" />
+                                    <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
+                                        
+                                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 opacity-40">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+                                      </svg>
+                                      
+                                    </div>
+                                    </div>
+
+                                    <label for="pin"  class="mt-4 mb-2 block text-sm font-medium">pincode</label>
+                                    <div class="relative">
+                                    <input type="text" required id="pincode" name="pincode" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="pincode" /> 
+                                    <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
+                                        
+                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                      </svg>
+                                        
+                                    </div>
+                                    </div>
+
+
+
+                            <!-- Total -->
+                      
+                      
+                        </div>
+                        <input type="submit" class="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white" value="Save And Deliver Here" >
+                      </form>
+
+                    
+            
+            </div> 
+
+          
+        </div>
+          
+          
+
+
+
+
+      </div>
+
+      <div>
+        <!-- Modal Container -->
+        <div id="myModal" class="modal fixed hidden inset-0 z-50 overflow-auto bg-black bg-opacity-50">
+          <!-- Modal Content -->
+          <div class="modal-content mx-auto my-12 p-6 bg-white w-96 shadow-lg rounded">
+
+            <!-- Close Button -->
+            <button id="closeModal" class="absolute top-0 right-0 mt-2 mr-2 text-gray-700 cursor-pointer">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+           
+            <!-- Address Table -->
+            <div class="grid grid-cols-1 gap-4">
+              {% for address in user_address %}
+              <div class="border p-4 hover:bg-gray-100 cursor-pointer" onclick="selectAddress('{{ address.id }}')">
+                <input class="hidden form-radio addresscheck" type="radio" name="address" value="{{ address.id }}" id="user_address_{{ address.id }}" {% if forloop.first %}checked{% endif %}>
+                <label class="ml-2 cursor-pointer select-none block">
+                  <div id="selectedAddressDetails_{{ address.id }}" class="address-details">
+                    <p data-name="Address"><strong>Address:</strong> {{ address.address }}</p>
+                    <p data-name="Name"><strong>Name:</strong> {{ address.first_name }}</p>
+                    <p data-name="State"><strong>State:</strong> {{ address.state }}</p>
+                    <p data-name="City"><strong>City:</strong> {{ address.city }}</p>
+                    <p data-name="Pin Code"><strong>Pin Code:</strong> {{ address.pincode }}</p>
+                    <p data-name="Phone number"><strong>Phone number:</strong> {{ address.phone_number }}</p>
+                     <hr class="my-4">
+                  </div>
+                </label>
+              </div>
+              {% endfor %}
+            </div>
+
+              <!-- Close Modal Button -->
+              <button id="closeModalContent" class="bg-gray-500 text-white p-2 mt-4 w-full rounded" onclick="handleCloseModal()">Close Modal</button>
+              <!-- Trigger button for Promo Modal -->
+            
+          </div>
+        </div>
+
+
+<div>
+
+
+  
+
+  <div id="promoModal" class="modal fixed hidden inset-0  flex items-center justify-center">
+    <form id="myform" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="cart_total" value="{{ cart_total }}">
+        <div class="modal-content bg-white border rounded-lg shadow-md p-4">
+            <span onclick="closePromoModal()" class="close text-3xl font-semibold cursor-pointer">&times;</span>
+
+            <div class="mb-6">
+                <label for="promoCode" class="block text-gray-700 text-sm font-bold mb-2">Enter Promo Code:</label>
+                <input type="text" name="promocodevalue" id="promoCode" class="w-full border rounded py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300" placeholder="Enter promo code">
+                <p>Available codes</p>
+                <p class="text-gray-500 text-xs mt-2">
+                    {% for promocode in promocodes %}
+                        {{ promocode.code }} ({{ promocode.discount_price }}){% if not forloop.last %},<br> {% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+
+            <div class="text-center">
+                <button type="button" onclick="applyPromoCode()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    Apply
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+
+<script>
+
+
+
+
+  function select_promocode(code){
+    
+  promocode = document.getElementById('promoCode')  
+  promocode.value=code
+
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+      // Get all radio buttons and their corresponding labels
+      const radioButtons = document.querySelectorAll('input[name="radioGroup"]');
+      const labels = document.querySelectorAll('label[for^="radioButton"]');
+
+      // Add event listener to each radio button
+      radioButtons.forEach(function(radioButton, index) {
+        radioButton.addEventListener("change", function() {
+          // Hide all markers
+          labels.forEach(function(label) {
+            label.querySelector('.marker').style.opacity = '0';
+          });
+
+          // Show the marker for the selected radio button
+          labels[index].querySelector('.marker').style.opacity = '1';
+        });
+      });
+    });
+
+
+
+    function openEditModal(addressId) {
+      // Fetch address details based on addressId and fill the form
+      // Assuming you have an endpoint to get address details by ID
+      // Use JavaScript or an AJAX request to fetch data and populate the form fields
+
+      // Example using vanilla JavaScript and assuming you have an endpoint '/get_address_details/'
+      fetch(`/get_address_details/?address_id=${addressId}`)
+          .then(response => response.json())
+          .then(data => {
+              // Fill the form fields with data received from the server
+              document.getElementById('first_name').value = data.first_name;
+              // Repeat similar lines for other form fields
+          });
+
+      // Show the modal
+      document.getElementById('edit-modal').classList.remove('hidden');
+  }
+
+  function closeEditModal() {
+      // Close the modal
+      document.getElementById('edit-modal').classList.add('hidden');
+  }  
+  
+
+
+  function confirmDelete(url) {
+    console.log("URL:", url);  // Check if the URL is correct
+    var userConfirmed = window.confirm("Are you sure you want to delete?");
+    
+    if (userConfirmed) {
+        console.log("User confirmed. Redirecting...");
+        window.location.href = url;
+    } else {
+        console.log("Delete canceled by user.");
+    }
+  }
+
+
+
+
+
+
+  function openModal() {
+    document.getElementById('modal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.add('hidden');
+  }
+
+  document.getElementById('close-modal').addEventListener('click', closeModal);
+
+  // Close modal if the overlay is clicked
+  document.getElementById('modal').addEventListener('click', function (event) {
+    if (event.target === this) {
+      closeModal();
+    }
+  });
+</script>
+<script>
+  function openPromoModal() {
+      document.getElementById('promoModal').classList.remove('hidden');
+  }
+
+  function closePromoModal() {
+      $('#promoModal').addClass('hidden');
+  }
+
+  const promocodeForm = $('#myform');
+
+  function applyPromoCode() {
+    const promoCodeInput = $('#promoCode');
+    const promoCode = promoCodeInput.val().trim();
+
+    // Validate the entered promo code
+    if (promoCode === "") {
+        alert("Please enter a promo code.");
+        return;
+    }
+
+    const formData = promocodeForm.serialize();
+
+    console.log('Form Data:', formData);  // Log the form data
+
+    $.ajax({
+        type: 'POST',
+        url: '/promocode_view/',
+        data: formData,
+        dataType: 'json',
+        success: function(response) {
+            if ('discount' in response && 'finalTotal' in response) {
+                const newDiscount = response.discount;
+                $('#discountValue').text(`₹ ${newDiscount}`);
+                $('#finalTotal').text(`₹ ${response.finalTotal}`);
+            } else {
+                console.error('Invalid response format:', response);
+                alert('Error applying promo code. Please check and try again.');
+            }
+        },
+        error: function(error) {
+            console.error('Error in AJAX request:', error);
+            alert('Error applying promo code. Please check and try again.');
+        },
+        complete: function() {
+            closePromoModal();
+        }
+    });
+}
+
+</script>
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script>
+    var options = {
+        "key": "rzp_test_HIRhNkqNybeWdx", // Enter the Key ID generated from the Dashboard
+        "amount": "{{ payment.amount }}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        "currency": "INR",
+        "name": "Usbot",
+        "description": "Purchases",
+        "image": "https://example.com/your_logo",
+        "order_id": "{{payment.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        "handler": function (response){
+          orderform = document.getElementById("orderform")
+          payment_mode = document.getElementById("payment_mode")
+          payment_mode.value = "razorpay"
+          orderform.submit()
+      //      alert(response.razorpay_payment_id);
+          //  alert(response.razorpay_order_id);
+         //   alert(response.razorpay_signature)
+        },
+  
+        "theme": {
+            "color": "#3399cc"
+        }
+
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response){
+            alert(response.error.code);
+            alert(response.error.description);
+            alert(response.error.source);
+            alert(response.error.step);
+            alert(response.error.reason);
+            alert(response.error.metadata.order_id);
+            alert(response.error.metadata.payment_id);
+    });
+    document.getElementById('rzp-button1').onclick = function(e){
+        rzp1.open();
+        e.preventDefault();
+    }
+    </script> 
+
+
+
+<script>
+  // JavaScript to handle modal interaction
+  const openModalButton = document.getElementById('openModal');
+  const closeModalButton = document.getElementById('closeModal');
+  const closeModalContentButton = document.getElementById('closeModalContent');
+  const modal = document.getElementById('myModal');
+
+  openModalButton.addEventListener('click', () => {
+    modal.classList.remove('hidden');
+  });
+
+  closeModalButton.addEventListener('click', () => {
+    modal.classList.add('hidden');
+  });
+
+  closeModalContentButton.addEventListener('click', () => {
+    modal.classList.add('hidden');
+  });
+</script>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const selectedAddress = document.getElementById('selectedAddress');
+      const initiallyCheckedRadio = document.querySelector("input[name='address']:checked");
+  
+      if (initiallyCheckedRadio) {
+        const radioLabel = initiallyCheckedRadio.nextElementSibling;
+        selectedAddress.innerHTML = radioLabel.innerHTML;
+      }
+    });
+  
+    function updateAddress() {
+      
+      const selectedRadio = document.querySelector("input[name='address']:checked");
+      const radioLabel = selectedRadio.nextElementSibling;
+      const selectedAddress = document.getElementById('selectedAddress');
+      selectedAddress.innerHTML = radioLabel.innerHTML;
+     
+
+      updateHiddenInput(selectedRadio); // Call updateHiddenInput to update the hidden input field
+    }
+  
+    
+  
+    function selectAddress(addressId) {
+      hidden_address = document.getElementById("selectedAddressId")
+      const radio = document.getElementById('user_address_' + addressId);
+      console.log('Radio Value:', radio.value); // Log the radio value to the console
+      radio.checked = true;
+      hidden_address.value = radio.value
+      updateAddress();
+    }
+    
+  </script>
+  
+
+
+
+<script>
+  function handleCloseModal() {
+    // Your logic to handle the selected address when the modal is closed
+    // You can retrieve the selected address using JavaScript and perform any necessary actions
+    // For example, you can update the UI with the selected address or make an AJAX request to save it.
+    
+    // Close the modal (assuming you have a function for that)
+    closeTheModal();
+  }
+
+  function closeTheModal() {
+    // Your logic to close the modal, you may need to implement this function
+    // depending on how you've implemented the modal in your application
+    document.getElementById("myModal").classList.add("hidden");
+  }
+
+
+  function setpayment_mode(mode) {
+    payment_mode = document.getElementById('payment_mode')
+    payment_mode.value = mode
+  }
+</script>
+<script>
+
+
+  let username = document.getElementById('username');
+  let password1 = document.getElementById('password1');
+  let email = document.getElementById('email');
+  
+  username.addEventListener('input', validateUsername);
+  password1.addEventListener('input', validatePassword1);
+  email.addEventListener('input', validateEmail);
+  
+  function validateUsername() {
+      if (username.value.length < 6) {
+          username.style.color = 'red';
+      } else {
+          username.style.color = 'green';
+      }
+  }
+  
+  function validatePassword1() {
+      if (password1.value.length < 8) {
+          password1.style.color = 'red';
+      } else {
+          password1.style.color = 'green';
+      }
+  }
+  
+  function validateEmail() {
+      // Use a regular expression for basic email validation
+      const emailRegex = /\S+@\S+\.\S+/;
+  
+      if (!emailRegex.test(email.value)) {
+          email.style.color = 'red';
+      } else {
+          email.style.color = 'green';
+      }
+  }
+</script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+
+<script>
+  document.getElementById('form1').addEventListener('submit', function (event) {
+    var numberValue = document.getElementById("number").value;
+    var pinValue = document.getElementById("pincode").value;
+
+    var numberRegex = /^\d{10}$/;
+    var pinRegex = /^\d{6}$/;
+
+    var errorMessages = [];
+
+    if (!numberRegex.test(numberValue)) {
+        errorMessages.push("Invalid number. Please enter a 10-digit number.");
+    }
+
+    if (!pinRegex.test(pinValue)) {
+        errorMessages.push("Invalid pin code. Please enter a 6-digit pin code.");
+    }
+
+    if (errorMessages.length > 0) {
+        event.preventDefault(); // Prevent form submission
+        document.getElementById('errorMessages').innerHTML = errorMessages.join('<br>');
+    }
+});
+</script>
+
+
+
+
+{% endblock %}

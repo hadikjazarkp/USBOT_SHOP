@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USBOT</title>
+</head>
+<body>
+<div style="font-size: xx-large;text-align: center;font-weight: bold;margin-bottom: 2rem;">INVOICE</div>
+<table style="width: 100%;margin-bottom: 2rem;">
+  <tr>
+    <td style="width: 30%;font-size: x-large;font-weight: 500;">From Address</td>
+    <td style="width: 30%;font-size: x-large;font-weight: 500;">Deliver Address</td>
+    <td style="width: 40%;font-size: x-large;font-weight: 500;">Order Details</td>
+  </tr>
+  <tr>
+    <td style="font-size: large;">Echo Tunes<br>echotunes@gmail.com <br> Kozhikode, Kerala</td>
+    <td style="font-size: large;">dhdyth <br>dsghstbr <br>fvsv</td>
+    <td style="font-size: large;">order id : {{ order.id }} <br> date : {{ order.created_at }} <br> payment mode : {{ order.payment_mode }}</td>
+  </tr>
+</table>
+<div style="font-size: x-large; font-weight: bold;">Order Details</div>
+  <table style="border: 1px solid gray;padding: 4px;font-size: larger;margin-bottom: 1rem;">
+    <tr style="background-color: lightgray;">
+      <th>Product</th>
+      <th>Count</th>
+      <th>Unit Price</th>
+      <th>Amount</th>
+    </tr>
+    {% for item in order.userorderitem.all %}
+    <tr>
+      <td>{{item.variant.products.name}} {{item.variant.color}}</td>
+      <td>{{item.quantity}}</td>
+      <td>{{item.variant.selling_price}}</td>
+      <td>{{item.price}}</td>
+    </tr>
+    
+  </table>
+  <table style="font-size: x-large;">
+    <tr>
+      <td></td>
+      <td></td>
+      <td>Total Amount</td>
+      <td>Rs. {{item.price}}/-</td>
+    </tr>
+      <tr>
+      <td></td>
+      <td></td>
+      <td>Coupon Discount</td>
+      <td>Rs. {{item.coupon}}/-</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td style="font-weight: 500;">Final Amount</td>
+      <td style="font-weight: 500;">Rs. {{item.total}}/-</td>
+    </tr>
+  </table>
+</div>
+{% endfor %}
+</body>
+</html>

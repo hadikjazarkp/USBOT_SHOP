@@ -1,0 +1,21 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% csrf_token %}
+{% block content %}
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Confirmation</title>
+</head>
+<body>
+    <h1>Your Order has been Confirmed</h1>
+    <p>Order ID: {{ order.id }}</p>
+    <p>Status: {{ order.status }}</p>
+    <p>Total Price: {{ order.total_price }}</p>
+    <!-- Add other order details here -->
+</body>
+</html>
+{% endblock %}

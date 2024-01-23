@@ -1,0 +1,78 @@
+   
+{% extends "layouts/main.html" %}
+
+{% load static %}
+
+
+{% block content %}
+{% load i18n %}
+<hr>
+<div class="my-div border-l-8 border-r-8 border-white">
+<div class="relative">
+    <img src="{% static 'usbotimgg.jpg' %}" alt="" class="w-full h-auto">
+    <div class="absolute inset-0 flex flex-col md:mt-72 md:ml-16 ">
+        <h1 class="text-4xl md:text-6xl lg:text-8xl font-bold mb-4 text-white ">USBOT <br>ATELIER</h1>
+        <h2 class="text-sm md:text-base lg:text-lg text-white-500 dark:text-white-300 text-white">Join the movement to reduce use of plastic – <br> switch to our Atelier steel bottles.</h2>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-white gap-4 mt-10">
+        <!-- USBOT ATELIER -->
+        <div class="md:col-span-2 bg-yellow-100 dark:bg-gray-800 p-8 relative" style="background-image: url('{% static 'usbotimgg.jpg' %}'); background-size: cover;">
+            <div class="absolute inset-0 bg-black opacity-25"></div>
+            <a href="{% url 'categoryview' slug='usbot-atelier' %}" class="text-center block relative z-10">
+                <h1 class="text-4xl md:text-6xl lg:text-8xl font-bold mb-4 text-white-700 dark:text-white-200 text-white">USBOT ATELIER</h1>
+                <h3 class="text-sm md:text-base lg:text-lg text-white-500 dark:text-white-300 text-white">Join the movement to reduce use of plastic – switch to our Atelier steel bottles.</h3>
+                <div class="mt-4">
+                    <button class="w-full md:w-48 bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-600 dark:hover:bg-gray-700">SHOP NOW</button>
+                </div>
+            </a>
+        </div>
+    <!-- HOT & COLD -->
+<div class="md:col-span-1 bg-cover bg-center relative" >
+    <div class=" dark:bg-gray-800 p-8 absolute inset-0" style="background-image: url('{% static 'bgimage.jpeg' %}');"></div>
+    <a href="{% url 'categoryview' slug='hot-cold' %}" class="text-center block relative z-10">
+        <h1 class="text-4xl md:text-6xl lg:text-8xl font-bold mb-4 text-white-700 dark:text-white-200 text-white">HOT & COLD</h1>
+        <h3 class="text-sm md:text-base lg:text-lg text-white-500 dark:text-white-300 text-white">A smarter way to hydrate is, Keep your drinks 24/18 hours cold & hot with Vacuum technology.</h3>
+        <div class="mt-4">
+            <button class=" mb-3 text-gray-900 w-full md:w-48 bg-white dark:bg-white-600 text-white py-2 px-4 rounded-full hover:bg-gray-600 dark:hover:bg-gray-700">SHOP NOW</button>
+        </div>
+    </a>
+</div>
+
+
+    <!-- Six Featured Products -->
+    {% for product in six_products %}
+    <a href="{% url 'productview' pslug=product.slug vslug=product.variants.first.slug %}" class="text-center shadow-md my-2 bg-white dark:bg-gray-900 rounded-md overflow-hidden transition duration-300 transform hover:scale-105">
+        <div class="flex items-center justify-center">
+            <img src="{{ product.variants.first.cover_image.url }}" alt="Product" class="h-40 w-40 object-cover" />
+        </div>
+        <h1 class="text-sm md:text-lg font-bold my-2">{{ product.name }}</h1>
+        <div class="flex items-center justify-center">
+            <p class="text-sm md:text-lg font-semibold text-black cursor-auto my-1"> ₹ {{ product.variants.first.selling_price }}</p>
+            <del>
+                <p class="text-xs md:text-sm text-gray-600 cursor-auto ml-1"> ₹ {{ product.variants.first.orginal_price }}</p>
+            </del>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+</div>
+ 
+
+
+
+{% endblock content %}   
+    
+ 
+ 
+ 
+
+
+
+
+
+
+
+

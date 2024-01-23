@@ -1,0 +1,98 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% csrf_token %}
+{% block content %}
+
+
+
+
+<div class="container mx-auto my-3">
+    <div class="grid grid-cols-1">
+        <div class="col-span-1">
+            <div class="bg-white shadow-lg p-6">
+                <div class="bg-gray-200 p-4">
+                    <h1 class="text-2xl font-semibold">Order View
+                        <a href="{% url "myorders" %}"  class=" float-right"><button class="bg-yellow-500 text-white text-base px-2"><i class="fa-solid fa-arrow-left"></i> Back</button></a>
+                    </h1>
+                </div>
+                
+                <div class="mt-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="col-span-1">
+                            <h4 class="text-xl font-semibold">Shipping Details</h4>
+                            <hr class="my-2">
+                            <label class="text-gray-600 block">First Name</label>
+                            <div class="border p-2">{{ order.address.first_name }}</div>
+                            <label class="text-gray-600 block">Last Name</label>
+                            <div class="border p-2">{{ order.address.last_name }}</div>                      
+                            <label class="text-gray-600 block">Contact No</label>
+                            <div class="border p-2">{{ order.address.phone_number }}</div>
+                            <label class="text-gray-600 block">Email</label>
+                            <div class="border p-2">{{ order.UserProfile.email }}</div>
+                            <label class="text-gray-600 block">Address</label>
+                            <div class="border p-2">
+                                {{ order.address.address }},
+                                {{ order.address.city }},
+                                {{ order.address.state }}
+
+                            </div>
+                            <label class="text-gray-600 block">Pincode</label>
+                            <div class="border p-2">{{ order.address.pincode }}</div>
+                            
+                        </div>
+                        <div class="col-span-1">
+                            <table class="w-full">
+                                <thead>
+                                  <tr>
+                                    <th class="border p-2">Name</th>
+                                    <th class="border p-2">Quantity</th>
+                                    <th class="border p-2">Price</th>
+                                    <th class="border p-2">image</th>
+                                    
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for item in orderitems %}
+                                    <tr>
+                                      <td class="border p-2">{{ item.variant.color }}</td>
+                                      <td class="border p-2">{{ item.quantity }}</td>
+                                      <td class="border p-2">{{ item.price }}</td>
+                                      <td class="border p-2">
+
+                                        {{ item.status }}
+                                        <img src="{{ item.variant.cover_image.url }}" alt="variant_img" class="w-12">
+
+                                    </td>
+                                      
+                                    </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                              <h1 class="text-2xl text-bold p-2"> Grand Total : <span class="float-right">{{order.total_price}}</span></h1>
+
+                              <h6 class=" border p-2">Payment Mode : {{order.payment_mode}}</h6>
+                              <h6 class=" border p-2">Order status : {{order.status}}</h6>
+                              <h6 class="border p-2">Tracking No: {{ order.tracking_no}}</h6>
+                        </div>
+                    </div>
+                    <a class="btn btn-sm btn-danger" href="{% url 'delete_order' order.id %}">Cancel</a>
+                    <a class="btn btn-sm btn-danger" href="{% url 'download' id=order.id %}">download</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+  
+
+
+
+{% endblock %}
+
+
+
+
+
+

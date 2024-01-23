@@ -1,0 +1,262 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  .out-of-stock-button {
+    border: 1px solid #000;
+    color: gray;
+    font-size: 14px;
+  }
+  
+  </style>
+
+
+
+{% comment %} <div class="py-3 bg-blue-500">
+  <div class="container mx-auto text-white">
+    <a href="{% url 'home' %}">HOME /</a>
+    <a href="{% url 'shop' %}">SHOP /</a>
+ 
+    
+  </div>
+</div> {% endcomment %}
+
+<hr>
+<div class=" bg-gradient-gray-dark py-12">
+ 
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row -mx-4">
+          
+          <div class="grid-flow-row ">
+            <img src="{{ variant.cover_image.url }}" onclick="change_cover_image('{{variant.cover_image.url}}', '.magnify-lens')" class="img-fluid border-2" style="width: 100px; height: 100px;" data-bs-toggle="tooltip" data-bs-placement="bottom">
+            {% for img in variant.colorimages.all %}
+            <img  src="{{ img.variantimg.url }}" onclick="change_cover_image('{{img.variantimg.url}}')" class="img-fluid border-2" style="width: 100px; height: 100px;" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{{ similar_variant.color }}"   >
+            {% endfor %}
+          </div>
+          
+          
+            <div class="md:flex-1 px-4 ">
+          
+          
+
+              <div class="h-100px rounded-lg  dark:bg-gray-700 mb-4">
+                <img id="main_image" class="zoom w-80  object-center " src="{{ variant.cover_image.url }}" alt="Product Image"  data-magnify-src="{{ variant.cover_image.url }}" >
+              </div>
+              <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+              <script src="{% static 'js/jquery_magnify.js' %}" charset="utf-8"></script>
+            </div>
+          
+          <div class="md:flex-1 px-4  ">
+                <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">{{ variant.color}}</h2>
+                
+                <div class="flex mb-4">
+
+                  <div>
+                    {% if variant.quantity > 0 %}
+                    <span class="font-bold text-gray-700 dark:text-gray-300">Availability:</span>
+                    <span class="text-green-400 dark:text-gray-300">In Stock</span>
+                    {% else %}
+                    <span class="font-bold text-gray-700 dark:text-gray-300">Availability:</span>
+                    <span class="text-red-400 dark:text-gray-300">Out Of Stock</span>
+                    {% endif %}
+                  </div>
+                    
+                </div>
+                
+                <div class="mr-4 flex justify-start ">
+                  <p class="font-bold text-black dark:text-gray-300">Price :</p>
+                  <del  class="text-red-500">
+                    <p class="text-gray-700 dark:text-gray-300 overline ml-2">{{variant.orginal_price}} </p>
+                  </del>
+                    <p class="text-black dark:text-gray-300 overline ml-2"> {{ variant.selling_price}}</p>
+                </div>
+                <div class="mb-4">
+                    <span class="font-bold text-black dark:text-gray-300">Select Color:</span>
+                    <div class="flex items-center mt-2">
+                      <div class="flex ps-2">
+                        {% for similar_variant in variant.product.variants.all %}
+                          <div class="col-1 m-1 p-0 bg-secondary-subtle rounded-1 border border-2 border-color: rgb(255 255 255); {% if similar_variant == variant %}  {% endif %}">
+                            <a href="{%  url 'productview' pslug=similar_variant.product.slug vslug=similar_variant.slug  %}">
+                              <img src="{{ similar_variant.cover_image.url }}" class="img-fluid" style="width: 100px; height: 100px;" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{{ similar_variant.color }}">
+                            </a>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      
+                    </div>
+                </div>
+
+                
+                <div class="mb-4">
+                    <span class="font-bold text-gray-700 dark:text-gray-300">Select Size:</span>
+                    <button>{{variant.size}}</button>
+                  
+                </div>
+                <div class="flex -mx-2 mb-4">
+                        <div class="w-1/2 px-2">
+                  
+                            <input type="hidden" name="variant_id" value="{{ variant.id }}">
+                            <div class="">
+                                <label for="quantity"></label>
+                              
+                            </div>
+
+                            {% if variant.quantity > 0%}
+
+                              {% comment %} <a  href="{% url "add_to_cart_button" slug=variant.slug %}">
+                                <button class="w-full bg-black dark:bg-gray-400 py-2 px-4 rounded-full font-bold hover:bg-gray-600 dark:hover:bg-gray-700 border border-black text-white">Add to cart</button>
+
+                              </a>  {% endcomment %}
+                              <button id="add-to-cart-button" data-slug="{{ variant.slug }}" class="w-full bg-black dark:bg-gray-400 py-2 px-4 rounded-full font-bold hover:bg-gray-600 dark:hover:bg-gray-700 border border-black text-white">Add to cart</button>
+
+                              
+                            {% else  %}
+
+                              
+                                <button class="w-full bg-black dark:bg-gray-400 py-2 px-4 rounded-full font-bold hover:bg-gray-600 dark:hover:bg-gray-700 border border-black text-white">Out Of Stock</button>     
+                            
+                            {% endif %}
+                            
+                        </div>
+                          {% comment %} <div class="flex items-center">
+                              <button type="button" class="quantity-button" id="quantity-minus">-</button>
+                              <input type="number" name="quantity" id="quantity" value="1" min="1" class="w-16 text-center" required>
+                              <button type="button" class="quantity-button" id="quantity-plus">+</button>
+                          </div> {% endcomment %}
+                            
+                        <div class="w-1/2 px-2">
+                          {% comment %} <form method="post" action="{% url 'add_to_wishlist' slug=variant.product.slug %}"> {% endcomment %}
+                            {% csrf_token %}
+                            <button id="add-to-wishlist-button" data-slug="{{ variant.product.slug }}" class="w-full bg-white dark:bg-white py-2 px-4 rounded-full font-bold hover:bg-gray-400 dark:hover:bg-gray-300 border border-black">Add to wishlist</button>     
+                          {% comment %} </form> {% endcomment %}
+                        </div>
+                </div>
+            
+                <div>
+                    <span class="font-bold text-black dark:text-gray-300">Product Description:</span>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mt-2">{{ variant.product.description }}
+                        </p>
+                </div>
+          
+          
+      </div>
+   </div>
+</div>
+
+
+
+
+<script>
+  {% comment %} document.addEventListener("DOMContentLoaded", function () {
+      const quantityInput = document.getElementById("quantity");
+      const quantityMinusButton = document.getElementById("quantity-minus");
+      const quantityPlusButton = document.getElementById("quantity-plus");
+
+      quantityMinusButton.addEventListener("click", function () {
+          if (quantityInput.value > 1) {
+              quantityInput.value = parseInt(quantityInput.value) - 1;
+          }
+      });
+
+      quantityPlusButton.addEventListener("click", function () {
+          quantityInput.value = parseInt(quantityInput.value) + 1;
+      });
+  });
+ {% endcomment %}
+
+  
+
+ jQuery(function($) {
+    // Initialize magnify on page load
+    $('#main_image').magnify();
+
+    // Function to change the cover image and update magnify
+    window.change_cover_image = function(cover_img_src, magnify_lens_selector) {
+        $('#main_image')
+            .attr('src', cover_img_src)
+            .attr('data-magnify-src', cover_img_src)
+            .off('load') // Remove previous load event handlers
+            .on('load', function() {
+                // Update the background URL of the magnify lens
+                $(magnify_lens_selector).css('background-image', 'url("' + cover_img_src + '")');
+                $('#main_image').magnify({
+                    destroy: true // Destroy previous magnify instance before reinitializing
+                });
+            });
+    };
+});
+
+</script> 
+<script>
+$(document).ready(function() {
+  $('#add-to-cart-button').click(function() {
+    var slug = $(this).data('slug');
+    addItemToCart(slug);
+  });
+
+  function addItemToCart(slug) {
+    $.ajax({
+      type: 'GET',  // Adjust this to 'POST' if needed
+      url: '/add_to_cart_button/' + slug + '/',
+      success: function(response) {
+        // Assuming the server sends a JSON response with a success message
+        console.log(response);
+        
+        location.reload();
+      },
+      error: function(error) {
+        // Check if the error status is 403 (Forbidden) indicating unauthenticated access
+        if (error.status === 403) {
+          
+          window.location.href = '/loginpage/';  // Redirect to the login page
+        } else {
+          console.error("Error adding product to cart", error);
+        }
+      }
+    });
+  }
+});
+</script>
+
+
+<script>
+  $(document).ready(function() {
+    $('#add-to-wishlist-button').click(function() {
+      var slug = $(this).data('slug');
+      addItemToCart(slug);
+    });
+  
+    function addItemToCart(slug) {
+      $.ajax({
+        type: 'GET',  // Adjust this to 'POST' if needed
+        url: '/add_to_wishlist_button/' + slug + '/',
+        success: function(response) {
+          // Assuming the server sends a JSON response with a success message
+          console.log(response);
+          
+          location.reload();
+        },
+        error: function(error) {
+          // Check if the error status is 403 (Forbidden) indicating unauthenticated access
+          if (error.status === 403) {
+           
+            window.location.href = '/loginpage/';  // Redirect to the login page
+          } else {
+            console.error("Error adding product to cart", error);
+          }
+        }
+      });
+    }
+  });
+  </script>
+
+{% endblock %}
+
+
+
+

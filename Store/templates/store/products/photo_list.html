@@ -1,0 +1,78 @@
+
+
+{% block javascript %}
+<script>
+  console.log("Hello");
+  const imageBox = document.getElementById("image-box");
+  const confirmButton = document.getElementById("confirm-button")
+  const input = document.getElementById("id_image");
+  const csrf = document.getElementsByName("csrfmiddlewaretoken")
+  const imageForm = document.getElementById("image-form")
+
+  input.addEventListener("change", () => {
+    console.log("change")
+
+    const img_data = input.files[0]
+    const url = URL.createObjectURL(img_data)
+
+    imageBox.innerHTML = `<img src="${url}" id="image" width="500px">`
+
+    var $image = $('#image');
+
+    $image.cropper({
+      aspectRatio: 16 / 9,
+      crop: function (event) {
+        console.log(event.detail.x);
+        console.log(event.detail.y);
+        console.log(event.detail.width);
+        console.log(event.detail.height);
+        console.log(event.detail.rotate);
+        console.log(event.detail.scaleX);
+        console.log(event.detail.scaleY);
+      }
+    });
+
+    // Get the Cropper.js instance after initialized
+    var cropper = $image.data('cropper');
+
+    confirmButton.addEventListener('click', () => {
+      cropper.getCroppedCanvas().toBlob((blob) => {
+        const fd = new FormData()
+        fd.append('csrfmiddlewaretoken', csrf[0].value)
+        fd.append('image', blob, 'my-image.png')
+        console.log("append pass")
+
+
+        $.ajax({
+          type: "POST",
+          url: imageForm.action,
+          enctype: 'multipart/form-data',
+          data: fd,
+          success: function (response) {
+            console.log(response)
+          },
+          error: function (error) {
+            console.log(error)
+          },
+          cache: false,
+          contentType: false,
+          processData: false,
+        })
+      })
+    })
+
+
+  });
+</script>
+{% endblock %}
+
+{% block page_content %}
+<form action="/cropimage/" id="image-form" method="POST">
+  {% csrf_token %}
+  {{form}}
+  {% comment %} <button class="btn" id="confirm-button"> confirm </button> {% endcomment %}
+  <input class="btn btn-lg btn-primary btn-block" type="submit" value="Submit" id="confirm-button">
+</form>
+<div id="image-box" class="mb-3"> </div>
+
+{% endblock %}

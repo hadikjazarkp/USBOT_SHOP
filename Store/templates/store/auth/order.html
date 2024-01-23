@@ -1,0 +1,46 @@
+{% extends "store/auth/settings.html" %}
+{% block profile %}
+
+
+<div class="container mx-auto my-3">
+    <div class="grid grid-cols-1">
+      <div class="col-span-1">
+        <div class="bg-white shadow-lg p-2">
+          <div class=" p-4">
+            <h3 class="text-2xl font-semibold">My Order</h3>
+          </div>
+          <hr>
+          <div class="mt-4">
+            <table class="w-full">
+              <thead>
+                <tr>
+                  <th class="border p-2">Order Date</th>
+                  <th class="border p-2">Tracking No</th>
+                  <th class="border p-2">Total Price</th>
+                  <th class="border p-2">Status</th>
+                  <th class="border p-2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in order %}
+                  <tr>
+                    <td class="border p-2">{{ item.created_at }}</td>
+                    <td class="border p-2">{{ item.tracking_no }}</td>
+                    <td class="border p-2">{{ item.total_price }}</td>
+                    <td class="border p-2">{{ item.status }}</td>
+                    <td class="border p-2">
+                      <a class="bg-blue-500 text-white px-4 py-2 rounded" href="{% url 'orderview' item.tracking_no %}">View</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+
+{% endblock profile %}
