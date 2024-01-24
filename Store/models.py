@@ -188,11 +188,11 @@ class Variant(BaseModel):
         return self.color
     
 
-class ColorImage(BaseModel):
+class Color_Image(models.Model):
     variant = models.ForeignKey(Variant, on_delete=models.CASCADE, related_name="colorimages")
-    variantimg = RichTextUploadingField(validators=[validate_image_type] )
+    variantimg = models.ImageField(validators=[validate_image_type] )
     
-   
+
  
 
 class Cart(BaseModel): 

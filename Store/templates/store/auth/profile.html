@@ -90,11 +90,12 @@
                                 
                             </div>
                             </div> {% endcomment %}
-                            <form action="{% url "edit_profile" %}" method="post" enctype="multipart/form-data" >
+                            {% comment %} <form action="{% url "edit_profile" %}" method="post" enctype="multipart/form-data" >
                               {% csrf_token %}
+                              <label for="profile_photo">Add PROFILE</label>
                               <input type="file" name="profile_image">
                               <button type="submit">ok</button>
-                            </form>
+                            </form> {% endcomment %}
                       </table> 
 
 {% endblock profile %}

@@ -15,13 +15,40 @@
   <div class="grid grid-cols-1">
       <div class="col-span-1">
           <div class="bg-white shadow-lg p-6">
-            <div class="">
+            <div class="relative inline-block">
               {% if request.user.profile_image %}
-              <img  src="{{ user.profile_image.url }}" alt="Profile Image" class="rounded-full h-20 w-20">
-            {% else %}
-            <img src="{% static 'profile-circle-icon-512x512-zxne30hp.png' %}" alt="default_image" class="rounded-full h-20 w-20" >
-            {% endif %} 
+                <img src="{{ user.profile_image.url }}" alt="Profile Image" class="rounded-full h-20 w-20">
+              {% else %}
+                <img src="{% static 'profile-circle-icon-512x512-zxne30hp.png' %}" alt="default_image" class="rounded-full h-20 w-20">
+              {% endif %}
+              
+              <div class="relative">
+                <form action="{% url 'edit_profile' %}" method="post" enctype="multipart/form-data" id="profileForm">
+                    {% csrf_token %}
+                    
+                    <!-- Input file field for profile image -->
+                    <input type="file" name="profile_image" class="hidden" id="profileImageInput" onchange="showSubmitButton()" />
+                    
+                    <!-- Label for the file input -->
+                    <label for="profileImageInput" class="w-6 h-6 bg-white rounded-full absolute bottom-0 left-0 text-gray-500 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-4 h-4 mx-auto my-auto">
+                            <circle cx="12" cy="12" r="11" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle>
+                            <line x1="12" y1="6" x2="12" y2="18" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></line>
+                            <line x1="18" y1="12" x2="6" y2="12" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></line>
+                        </svg>
+                    </label>
+            
+                    <!-- Submit button (hidden by default) -->
+                    <button type="submit" class="hidden mt-1" id="submitButton">Submit</button>
+                </form>
+            
+                <!-- Button to trigger the modal-like effect (visible when input is not null) -->
+                {% comment %} <button type="button" onclick="document.querySelector('#profileImageInput').click()" class="bg-blue-500 text-white py-2 px-4 rounded-full  mr-2 mb-2" id="modalButton" style="display:none;">Submit</button> {% endcomment %}
             </div>
+            
+
+            
+              </div>
             
               <div class="mt-2">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -277,7 +304,7 @@
 
       <label for="email" class="mt-4 mb-2 block text-sm font-medium">First name</label>
       <div class="relative">
-       <input type="text" id="first_name" name="first_name" value="{{ad.first_name}}"  class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="first_name" /> 
+       <input type="text" id="first_name" name="first_name" value="{{ad.first_name}}" pattern="[A-Za-z]+" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="first_name" /> 
       <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
           
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -289,7 +316,7 @@
 
       <label for="email" class="mt-4 mb-2 block text-sm font-medium">last name</label>
       <div class="relative">
-      <input type="text" id="last_name" name="last_name" value="{{ad.last_name}}"  class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="last_name" />
+      <input type="text" id="last_name" name="last_name" value="{{ad.last_name}}" pattern="[A-Za-z]+"  class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="last_name" />
       <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
           
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -301,7 +328,7 @@
 
       <label for="email" class="mt-4 mb-2 block text-sm font-medium">city</label>
       <div class="relative">
-      <input type="text" id="city" name="city" value="{{ad.city}}"  class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="city" />
+      <input type="text" id="city" name="city" value="{{ad.city}}" pattern="[A-Za-z]+" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="city" />
       <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
           
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 opacity-40">
@@ -313,7 +340,7 @@
 
       <label for="email" class="mt-4 mb-2 block text-sm font-medium">state</label>
       <div class="relative">
-      <input type="text" id="state" name="state" value="{{ad.state}}" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="state" />
+      <input type="text" id="state" name="state" value="{{ad.state}}" pattern="[A-Za-z]+" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="state" />
       <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
           
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 opacity-40">
@@ -383,7 +410,7 @@
                           <p class="text-gray-400">Complete your order details.</p>
                           <label for="email" class="mt-4 mb-2 block text-sm font-medium">Address</label>
                           <div class="relative">
-                          <input type="text" id="email" name="email" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="Address" />
+                          <input type="text" id="email" name="email" pattern="[A-Za-z]+" required title="Only alphabetic characters are allowed for the Address."   class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="Address" />
                           <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
                               
                               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 opacity-40">
@@ -395,7 +422,7 @@
 
                           <label for="email" class="mt-4 mb-2 block text-sm font-medium">First name</label>
                           <div class="relative">
-                          <input type="text" id="first_name" name="first_name" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="first_name" />
+                          <input type="text" id="first_name" name="first_name" pattern="[A-Za-z]+" required title="Only alphabetic characters are allowed for the First name."   class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="first_name" />
                           <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
                               
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -407,7 +434,7 @@
 
                           <label for="email" class="mt-4 mb-2 block text-sm font-medium">last name</label>
                           <div class="relative">
-                          <input type="text" id="last_name" name="last_name" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="last_name" />
+                          <input type="text" id="last_name" name="last_name" pattern="[A-Za-z]+" required title="Only alphabetic characters are allowed for the last name."   class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="last_name" />
                           <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
                               
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -419,7 +446,7 @@
 
                           <label for="email" class="mt-4 mb-2 block text-sm font-medium">city</label>
                           <div class="relative">
-                          <input type="text" id="city" name="city" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="city" />
+                          <input type="text" id="city" name="city" pattern="[A-Za-z]+" required title="Only alphabetic characters are allowed for the city."   class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="city" />
                           <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
                               
                               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 opacity-40">
@@ -431,7 +458,7 @@
 
                           <label for="email" class="mt-4 mb-2 block text-sm font-medium">state</label>
                           <div class="relative">
-                          <input type="text" id="state" name="state" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="state" />
+                          <input type="text" id="state" name="state" pattern="[A-Za-z]+" required title="Only alphabetic characters are allowed for the state."   class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="state" />
                           <div class="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
                               
                               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 opacity-40">
@@ -541,4 +568,21 @@
       
       
       </script>
+
+
+      <script>
+        function showSubmitButton() {
+            var inputFile = document.getElementById('profileImageInput');
+            var submitButton = document.getElementById('submitButton');
+            var modalButton = document.getElementById('modalButton');
+    
+            if (inputFile && inputFile.files && inputFile.files.length > 0) {
+                submitButton.style.display = 'block';
+                modalButton.style.display = 'block';
+            } else {
+                submitButton.style.display = 'none';
+                modalButton.style.display = 'none';
+            }
+        }
+    </script>
 {% endblock content %}

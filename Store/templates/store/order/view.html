@@ -75,8 +75,8 @@
                               <h6 class="border p-2">Tracking No: {{ order.tracking_no}}</h6>
                         </div>
                     </div>
-                    <a class="btn btn-sm btn-danger" href="{% url 'delete_order' order.id %}">Cancel</a>
-                    <a class="btn btn-sm btn-danger" href="{% url 'download' id=order.id %}">download</a>
+                    <a class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mt-4 rounded" href="{% url 'delete_order' order.id %}">Cancel</a>
+                    <a class="bg-blue-500 hover:bg-green-700 text-white font-bold py-2 px-4 mt-4 rounded" href="{% url 'download' id=order.id %}">download</a>
                 </div>
             </div>
         </div>

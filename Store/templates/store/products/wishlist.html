@@ -107,8 +107,8 @@
       {% for item in wishlist_items %}
       <div class="flex flex-col">
       
-        <div class="relative">
-   
+      <div class="relative">
+          <a href="{% url 'productview' pslug=item.product.slug vslug=item.product.variants.first.slug %}">
           <img class="w-60 h-60" src="{{ item.product.variants.first.cover_image.url }}" alt="image" />
       
        <form method="post" action="{% url 'remove_from_wishlist' item.product.slug %}">
@@ -161,7 +161,7 @@
             
           </div>
         </div>
-         
+      </a>
       </div>
       {% endfor %}
          {% else %}
