@@ -104,7 +104,8 @@
 
                   
                     {% comment %} <button id="pay_pal"  class="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-full">PayPal</button> {% endcomment %}
-                   
+                    <button id="stripeButton" data-target="#stripeModal" type="button" class="py-2 px-4 bg-green-500 hover:bg-blue-700 text-white font-bold">Stripe</button>
+
                     <button id="cash_on_deliver" onclick="setpayment_mode('cash_on_delivery')" type="submit" class="py-2 px-4 bg-green-500 hover:bg-blue-700 text-white font-bold ">Cash on Delivery</button>
                       <button id="rzp-button1"  type="submit" class=" py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold  ">Razorpay</button>
                   </div>
@@ -302,16 +303,22 @@
         {% csrf_token %}
         <input type="hidden" name="cart_total" value="{{ cart_total }}">
         <div class="modal-content bg-white border rounded-lg shadow-md p-4">
-            <span onclick="closePromoModal()" class="close text-3xl font-semibold cursor-pointer">&times;</span>
+            <span onclick="closePromoModal()" class="close text-3xl font-semibold  cursor-pointer">&times;</span>
 
             <div class="mb-6">
                 <label for="promoCode" class="block text-gray-700 text-sm font-bold mb-2">Enter Promo Code:</label>
                 <input type="text" name="promocodevalue" id="promoCode" class="w-full border rounded py-2 px-3 focus:outline-none focus:shadow-outline-blue focus:border-blue-300" placeholder="Enter promo code">
                 <p>Available codes</p>
                 <p class="text-gray-500 text-xs mt-2">
-                    {% for promocode in promocodes %}
+                    {% comment %} {% for promocode in promocodes %}
                         {{ promocode.code }} ({{ promocode.discount_price }}){% if not forloop.last %},<br> {% endif %}
-                    {% endfor %}
+                    {% endfor %} {% endcomment %}
+                    {% for promocode in promocodes %}
+                    <label>
+                      <input type="radio" name="radioOption" value="{{ promocode.code }}" onchange="updateInputValue(this.value)">
+                      {{ promocode.code }} ({{ promocode.discount_price }})
+                  </label>{% if not forloop.last %},<br> {% endif %}
+                  {% endfor %}
                 </p>
                 {% comment %} {% for promocode in promocodes %}
                 <input type="radio" id="html" name="fav_language" value="{{ promocode.code }}">
@@ -327,14 +334,36 @@
         </div>
     </form>
 </div>
-
+<div id="stripeModal" class="modal hidden fixed inset-0 h-full w-full bg-black bg-opacity-25 z-50">
+  <div class="modal-content bg-white m-auto p-6 max-w-md rounded">
+      <span class="close text-3xl font-bold cursor-pointer absolute top-0 right-0 p-4" onclick="closeModal()">&times;</span>
+      <h2 class="text-2xl font-bold mb-4">Buy for $5.00</h2>
+      <form action="{% url 'charge' %}" method="post">
+          <script src="https://checkout.stripe.com/checkout.js" class="stripe-button" 
+             data-key="{{ key }}"
+             data-description="Payment Gateway"
+             data-amount="500"
+             data-locale="auto">
+          </script>
+      </form>
+  </div>
+</div>
 
 
 
 <script>
+  document.getElementById('stripeButton').addEventListener('click', openModal);
+  
+  function openModal() {
+      document.getElementById('stripeModal').classList.remove('hidden');
+  }
+  
+  function closeModal() {
+      document.getElementById('stripeModal').classList.add('hidden');
+  }
+  </script>
 
-
-
+<script>
 
   function select_promocode(code){
     
@@ -410,6 +439,9 @@
     document.getElementById('modal').classList.remove('hidden');
   }
 
+  function updateInputValue(value) {
+    document.getElementById('promoCode').value = value;
+  }
   function closeModal() {
     document.getElementById('modal').classList.add('hidden');
   }

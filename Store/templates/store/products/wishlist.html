@@ -102,12 +102,12 @@
     <div class="mt-4">
       <p class="text-2xl tracking-tight leading-6 text-gray-600 dark:text-white"> {{user.wishlist.all|length}}item</p>
     </div>
-    <div class="mt-10 lg:mt-12 grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-10 lg:gap-y-0">
+    <div class="mt-10 lg:mt-12 grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-10  lg:gap-y-0">
       {% if wishlist_items %}
       {% for item in wishlist_items %}
-      <div class="flex flex-col">
+      <div class="flex flex-col border-2 p-1">
       
-      <div class="relative">
+      <div class="relative ">
           <a href="{% url 'productview' pslug=item.product.slug vslug=item.product.variants.first.slug %}">
           <img class="w-60 h-60" src="{{ item.product.variants.first.cover_image.url }}" alt="image" />
       
@@ -128,14 +128,14 @@
             <p class="tracking-tight text-2xl font-semibold leading-6 text-gray-800 dark:text-white">{{item.product.name}}</p>
           </div>
           <div class="flex justify-center items-center">
-            <button aria-label="show menu" onclick="handleClick{{ forloop.counter }}(true)" class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 py-2.5 px-2 bg-gray-800 dark:bg-white dark:text-gray-800 text-white hover:text-gray-400 hover:bg-gray-200">
+            {% comment %} <button aria-label="show menu" onclick="handleClick{{ forloop.counter }}(true)" class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 py-2.5 px-2 bg-gray-800 dark:bg-white dark:text-gray-800 text-white hover:text-gray-400 hover:bg-gray-200">
               <svg id="chevronUp{{ forloop.counter }}" class="fill-stroke" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M9 5L5 1L1 5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
               <svg id="chevronDown{{ forloop.counter }}" class="hidden fill-stroke" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
-            </button>
+            </button> {% endcomment %}
           </div>
         </div>
         <div id="menu{{ forloop.counter }}" class="flex flex-col jusitfy-start items-start mt-12">

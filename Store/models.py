@@ -11,6 +11,7 @@ from Store.manager import UserProfileManager
 from django.utils.html import mark_safe
 from django.core.exceptions import ValidationError
 import os
+from django.core.validators import FileExtensionValidator
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor_uploader.fields import RichTextUploadingField
 
@@ -34,7 +35,7 @@ def validate_image_type(value):
 
 
 class Main_Images(BaseModel):
-    cover_image = models.ImageField(upload_to='main_img/',validators=[validate_image_type] )
+    cover_image = models.ImageField(upload_to='main_img/',validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'gif'])])
     
     
 class Logo(BaseModel):
@@ -275,3 +276,5 @@ class Image(models.Model):
 
     def __str__(self):
         return str(self.pk)         
+    
+    

@@ -34,8 +34,8 @@ urlpatterns = [
     path('download/<str:id>', order.UserInvoice.as_view(), name="download"),
 
     
-    path('paypal/', include('paypal.standard.ipn.urls')),
-   
+    # path('paypal/', include('paypal.standard.ipn.urls')),
+    
       
     path('promocode_view/', views.promocode_view, name='promocode_view'),
    
@@ -54,5 +54,9 @@ urlpatterns = [
     path('profile_view/',views.profile_view, name="profile_view"),
     path('profile_order/',views.profile_order, name="profile_order"),
     path('profile_address/',views.profile_address, name="profile_address"),
+    
+    
+    path('charge/', views.charge, name="charge"),
+    
 ]
 

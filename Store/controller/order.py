@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 import razorpay
 from django.conf import settings
-from paypal.standard.forms import PayPalEncryptedPaymentsForm
+# from paypal.standard.forms import PayPalEncryptedPaymentsForm
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 import stripe
@@ -45,8 +45,7 @@ def delete_order(request, pk):
     if request.method == "GET":
         order.status = "Cancelled"
         order.save()
-        
-
+        messages.success(request, "Your order has been Cancelled successfully")
     return redirect(request.META.get('HTTP_REFERER', '/'))    
 
 

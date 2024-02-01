@@ -27,7 +27,7 @@
                     {% csrf_token %}
                     
                     <!-- Input file field for profile image -->
-                    <input type="file" name="profile_image" class="hidden" id="profileImageInput" onchange="showSubmitButton()" />
+                    <input type="file" name="profile_image" accept="image/*" class="hidden" id="profileImageInput" onchange="showSubmitButton()" />
                     
                     <!-- Label for the file input -->
                     <label for="profileImageInput" class="w-6 h-6 bg-white rounded-full absolute bottom-0 left-0 text-gray-500 cursor-pointer">
@@ -39,7 +39,7 @@
                     </label>
             
                     <!-- Submit button (hidden by default) -->
-                    <button type="submit" class="hidden mt-1" id="submitButton">Submit</button>
+                    {% comment %} <button type="submit" class="hidden mt-1" id="submitButton">Submit</button> {% endcomment %}
                 </form>
             
                 <!-- Button to trigger the modal-like effect (visible when input is not null) -->
@@ -573,16 +573,18 @@
       <script>
         function showSubmitButton() {
             var inputFile = document.getElementById('profileImageInput');
-            var submitButton = document.getElementById('submitButton');
-            var modalButton = document.getElementById('modalButton');
+            var profileForm= document.getElementById('profileForm');
+            //var submitButton = document.getElementById('submitButton');
+           // var modalButton = document.getElementById('modalButton');
     
             if (inputFile && inputFile.files && inputFile.files.length > 0) {
-                submitButton.style.display = 'block';
-                modalButton.style.display = 'block';
-            } else {
-                submitButton.style.display = 'none';
-                modalButton.style.display = 'none';
-            }
+              profileForm.submit()
+               // submitButton.style.display = 'block';
+                //modalButton.style.display = 'block';
+            }// else {
+               // submitButton.style.display = 'none';
+                //modalButton.style.display = 'none';
+          //  }
         }
     </script>
 {% endblock content %}

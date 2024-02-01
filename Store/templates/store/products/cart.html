@@ -102,12 +102,10 @@
             url: '/remove_from_cart/' + slug + '/',
             success: function(response) {
               console.log(response);
-              alert("Item removed from the cart successfully");
               location.reload();
             },
             error: function(error) {
               console.error("Error removing item from the cart: " + error.responseText);
-              alert("Error removing item from the cart: " + error.responseText);
             }
           });
         }

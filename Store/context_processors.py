@@ -86,3 +86,13 @@ def custom_admin_context(request):
         }
     
     return {}
+
+
+def user_navbar(request):
+    if not request.path.startswith('/admin/'):        
+        categorys = Category.objects.all()
+        return {
+            "categorys" : categorys
+        }
+    else:
+        return {}

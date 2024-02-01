@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 import razorpay
 from django.conf import settings
-from paypal.standard.forms import PayPalEncryptedPaymentsForm
+# from paypal.standard.forms import PayPalEncryptedPaymentsForm
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 import stripe
@@ -16,6 +16,7 @@ from django.http import HttpResponse
 import random
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
+
 
 
 from django.shortcuts import render
@@ -171,6 +172,7 @@ def add_to_cart_button(request, slug):
     try:
         variant = Variant.objects.get(slug=slug)
         cart_item, created = Cart.objects.get_or_create(variant=variant, user=request.user)
+        messages.success(request, "Your Add to Cart has been successfully")
         if created:
             message = "Product added to cart successfully"
         else:
@@ -207,42 +209,84 @@ def remove_from_cart(request, slug):
         return JsonResponse({'success': False, 'message': str(e)}, status=500)
   
                                                     
+# @login_required
+# def checkout(request):
+
+#     cart_items = Cart.objects.filter(user=request.user)
+#     cart_total = 0
+#     user_address = Address.objects.filter(user=request.user)
+    
+#     final_price = 0
+    
+    
+#     for item in cart_items:
+        
+#         cart_total=cart_total+item.total_price
+     
+     
+#     promocodes = PromoCode.objects.filter(purchase_price__lte=cart_total)
+#     discount_price = 0
+#     if request.session.get('discount'):
+#         print("session price")
+#         discount_price = request.session.get('discount')
+#         del request.session['discount']   
+#     else:
+#         print("not session")
+#     print(discount_price)
+#     final_price = cart_total - discount_price
+
+#     client =razorpay.Client( auth = (settings.KEY, settings.SECRET))
+#     payment = client.order.create({'amount': (final_price) * 100, 'currency': 'INR', 'payment_capture': 1 }) 
+#     item.rezor_pay_order_id = payment['id']
+#     item.save()
+
+
+
+#     return render(request, 'store/products/checkout.html', {'cart_items':cart_items, 'cart_total':cart_total, 'promocodes':promocodes, 'user_address':user_address, 'final_price':final_price, 'discount_price':discount_price, 'payment':payment})   
+
+
+
 @login_required
 def checkout(request):
-
     cart_items = Cart.objects.filter(user=request.user)
-    cart_total = 0
+    cart_total = sum(item.total_price for item in cart_items)
     user_address = Address.objects.filter(user=request.user)
-    
-    final_price = 0
-    
-    
-    for item in cart_items:
-        
-        cart_total=cart_total+item.total_price
-     
-     
+
+    final_price = cart_total
+
     promocodes = PromoCode.objects.filter(purchase_price__lte=cart_total)
     discount_price = 0
+
     if request.session.get('discount'):
         print("session price")
         discount_price = request.session.get('discount')
-        del request.session['discount']   
+        del request.session['discount']
     else:
         print("not session")
-    print(discount_price)
-    final_price = cart_total - discount_price
 
-    client =razorpay.Client( auth = (settings.KEY, settings.SECRET))
-    payment = client.order.create({'amount': (final_price) * 100, 'currency': 'INR', 'payment_capture': 1 }) 
+    print(discount_price)
+    final_price -= discount_price
+
+    client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
+    payment = client.order.create({'amount': final_price * 100, 'currency': 'INR', 'payment_capture': 1})
+    item = cart_items.first()  # Assuming you are working with the first item in the cart
     item.rezor_pay_order_id = payment['id']
     item.save()
 
+    # Add the Stripe publishable key to the context
+    stripe_publishable_key = settings.STRIPE_PUBLISHABLE_KEY
+    context = {
+        'cart_items': cart_items,
+        'cart_total': cart_total,
+        'promocodes': promocodes,
+        'user_address': user_address,
+        'final_price': final_price,
+        'discount_price': discount_price,
+        'payment': payment,
+        'key': stripe_publishable_key,
+    }
 
-
-    return render(request, 'store/products/checkout.html', {'cart_items':cart_items, 'cart_total':cart_total, 'promocodes':promocodes, 'user_address':user_address, 'final_price':final_price, 'discount_price':discount_price, 'payment':payment})   
-
-
+    return render(request, 'store/products/checkout.html', context)
 
 
 def add_address(request):
@@ -260,6 +304,7 @@ def add_address(request):
         # Print the values for testing
         Address.objects.create(first_name=first_name,last_name=last_name,address=address,city=city,state=state,phone_number=phone_number,pincode=pincode,address_type=address_type, user=request.user)
         print(first_name, last_name, address, city, state, phone_number,pincode, address_type)
+        messages.success(request, "Your Address has been Created successfully")
 
         # Perform any additional processing or save to the database as needed
 
@@ -290,6 +335,7 @@ def delete_address(request, address_id):
     address = get_object_or_404(Address, id=address_id)
     # if request.method == 'POST':
     address.delete()
+    messages.success(request, "Your Address has been Deleted")
         
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
@@ -420,5 +466,47 @@ def edit_profile(request):
         
         user.profile_image=profile_image
         user.save()
+        messages.success(request, "Your Address has been Edited ")
     return redirect(request.META.get('HTTP_REFERER', '/'))
         
+
+
+# def charge(request):
+#     if request.method == 'POST':
+#         charge = stripe.Charge.create(
+#             amount=500,
+#             currency='inr',
+#             description='A Django charge',
+#             source=request.POST['stripeToken']
+#         )
+
+def charge(request):
+    if request.method == 'POST':
+        try:
+            # Set your Stripe secret key
+            stripe.api_key = 'your_stripe_secret_key'
+
+            # Create a charge
+            charge = stripe.Charge.create(
+                amount=500,
+                currency='inr',
+                description='payment ',
+                source=request.POST['stripeToken']
+            )
+
+            # If the charge was successful, return a success message
+            return JsonResponse({'message': 'Payment successful!'})
+
+        except stripe.error.CardError as e:
+            # The card has been declined
+            return JsonResponse({'error_message': str(e)}, status=400)
+        except Exception as e:
+            # An error occurred during the payment process
+            return JsonResponse({'error_message': str(e)}, status=500)
+
+    # Handle cases where the request method is not POST
+    return JsonResponse({'error_message': 'Invalid request method'}, status=400)
+
+        
+    
+

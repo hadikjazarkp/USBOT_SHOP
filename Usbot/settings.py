@@ -43,17 +43,23 @@ INSTALLED_APPS = [
     'theme',
     'Store',
     'wishlist',
-    'ckeditor_uploader',
     'ckeditor',
+    'ckeditor_uploader',
+    'easy_thumbnails',
+    'image_cropping',
+    
+
+    
   
     
     
     # paypal intergration
-    'paypal.standard.ipn',
+    # 'paypal.standard.ipn',
 ]
 
 
-
+IMAGE_CROPPING_BACKEND = 'image_cropping.backends.easy_thumbs.EasyThumbnailsBackend'
+IMAGE_CROPPING_BACKEND_PARAMS = {}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -140,6 +146,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -204,5 +212,9 @@ KEY = 'rzp_test_HIRhNkqNybeWdx'
 SECRET = 'SbAXrEwCX45PooisjDgRmJ2x'
 
 
-PAYPAL_RECEIVER_EMAIL = 'usbotbottle@gmail.com'
-PAYPAL_TEST = True
+
+STRIPE_SECRET_KEY = "sk_test_51OeX1WSJJpJuUlr4Qhh0BfM5SWtxYnJlF5xelbG2qRG8O7L6FObTFmQ8Td4ZLs1VbCENJilbj4VvfrhjyuJn20QP00J1izk0KV"
+STRIPE_PUBLISHABLE_KEY = "pk_test_51OeX1WSJJpJuUlr4uWV5k5OgBy8nsFdTUy8oi5vaORefISDATgo8zKKDWcA5S22i4Ky8Dr8Rq5WK5alfDb5CD5h600Kbn29miS"
+
+# PAYPAL_RECEIVER_EMAIL = 'usbotbottle@gmail.com'
+# PAYPAL_TEST = True

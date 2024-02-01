@@ -79,7 +79,7 @@
     {% csrf_token %}
     <!-- Header -->
    
-    <header class="bg-white shadow-lg p-4">
+    <header class="bg-white shadow-lg p-4 fixed top-0 w-full z-50">
     
 
 
@@ -109,6 +109,7 @@
                   <div class="py-1" role="none">
                     <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
                     <a href="{% url 'shop' %}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">Shop</a>
+
                     <a href="{% url 'categoryview' slug='combo-packs'%}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">Combo</a>
                   </div>
                 </div>
@@ -279,9 +280,11 @@
     </header>
 
 
-    {% block content %}
-    {% endblock %}
-    
+    <div class="pt-20">
+      {% block content %}
+      {% endblock %}
+  </div>
+  
 
 <!-- Footer container -->
 <footer

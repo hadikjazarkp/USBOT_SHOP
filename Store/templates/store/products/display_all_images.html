@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Images</title>
+</head>
+<body>
+    <h1>All Images</h1>
+    {% for instance in all_instances %}
+        <div>
+            {% if instance.image %}
+                <img src="{{ instance.image.url }}" alt="Uploaded Image">
+            {% else %}
+                <p>No image uploaded for this instance.</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+</body>
+</html>
+
