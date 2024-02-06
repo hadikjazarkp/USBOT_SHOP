@@ -162,7 +162,8 @@ MEDIA_URL = '/media/'
 
 
 # This is the directory where collectstatic will copy all your static files.
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+# STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # This is the URL prefix used when referring to static files (CSS, JavaScript, images, etc.).
 STATIC_URL = '/static/'
