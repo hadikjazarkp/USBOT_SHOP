@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3$-)&3ao8*jf$l6y$=f%fm8$u!sxwbv1#2e8cu@ns+20glsj*6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['15.206.131.175', 'localhost','0.0.0.0']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -100,11 +100,11 @@ WSGI_APPLICATION = 'Usbot.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'bottle', 
-        'USER': 'myprojectuser',
-        'PASSWORD': 'password',
-        'HOST': 'localhost', 
-        'PORT': '',
+        'NAME': 'USBOT', 
+        'USER': 'ammu',
+        'PASSWORD': '123',
+        'HOST': '127.0.0.1', 
+        'PORT': '5432',
     }
 }
 
@@ -162,8 +162,7 @@ MEDIA_URL = '/media/'
 
 
 # This is the directory where collectstatic will copy all your static files.
-# STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 # This is the URL prefix used when referring to static files (CSS, JavaScript, images, etc.).
 STATIC_URL = '/static/'
