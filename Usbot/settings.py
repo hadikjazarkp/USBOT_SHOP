@@ -43,10 +43,10 @@ INSTALLED_APPS = [
     'theme',
     'Store',
     'wishlist',
-    'ckeditor',
-    'ckeditor_uploader',
-    'easy_thumbnails',
-    'image_cropping',
+    # 'ckeditor',
+    # 'ckeditor_uploader',
+    # 'easy_thumbnails',
+    # 'image_cropping',
     
 
     
