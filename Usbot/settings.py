@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3$-)&3ao8*jf$l6y$=f%fm8$u!sxwbv1#2e8cu@ns+20glsj*6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['15.207.195.160', 'localhost']
 
 
 # Application definition
@@ -103,8 +103,8 @@ DATABASES = {
         'NAME': 'USBOT', 
         'USER': 'ammu',
         'PASSWORD': '123',
-        'HOST': '127.0.0.1', 
-        'PORT': '5432',
+        'HOST': 'localhost', 
+        'PORT': '',
     }
 }
 
@@ -166,7 +166,8 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 # This is the URL prefix used when referring to static files (CSS, JavaScript, images, etc.).
 STATIC_URL = '/static/'
-
+import os
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 TAILWIND_APP_NAME = 'theme'
 
 
