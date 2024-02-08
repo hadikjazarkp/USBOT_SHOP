@@ -101,7 +101,9 @@ WSGI_APPLICATION = 'Usbot.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'USBOT', 
+        # 'NAME': 'USBOT', 
+        # nginex
+        'NAME': 'usbot',
         'USER': 'ammu',
         'PASSWORD': '123',
         'HOST': 'localhost', 
