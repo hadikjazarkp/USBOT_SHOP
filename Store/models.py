@@ -12,8 +12,8 @@ from django.utils.html import mark_safe
 from django.core.exceptions import ValidationError
 import os
 from django.core.validators import FileExtensionValidator
-from phonenumber_field.modelfields import PhoneNumberField
-from ckeditor_uploader.fields import RichTextUploadingField
+# from phonenumber_field.modelfields import PhoneNumberField
+# from ckeditor_uploader.fields import RichTextUploadingField
 
 #new
 from django.db.models.signals import post_save
@@ -100,7 +100,7 @@ class Address(models.Model):
     address = models.CharField(max_length=300)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
-    phone_number = PhoneNumberField()
+    phone_number = models.CharField(max_length=10)
     pincode = models.IntegerField()
     
  
@@ -122,7 +122,7 @@ class Category(BaseModel):
     name = models.CharField(max_length=150, )
     image = models.ImageField(upload_to='category/', null=True, blank=True, validators=[validate_image_type] )
     # description = models.TextField(max_length=500, null=False, blank=False)
-    description = RichTextUploadingField(max_length=500, null=False, blank=False)
+    description = models.CharField(max_length=500, null=False, blank=False)
    
     
     
