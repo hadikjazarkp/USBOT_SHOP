@@ -106,7 +106,7 @@ DATABASES = {
         'USER': 'ammu',
         'PASSWORD': '123',
         'HOST': 'localhost', 
-        'PORT': '5432',
+        'PORT': '',
         # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
         # 'NAME': 'USBOT', 
         # 'USER': 'ammu',
