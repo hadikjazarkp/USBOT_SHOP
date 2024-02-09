@@ -162,17 +162,24 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-TAILWIND_APP_NAME = 'theme'
+# STATIC_URL = 'static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'assets/')
+# STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
+
+STATIC_URL = 'assets/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
+
+
+TAILWIND_APP_NAME = 'theme'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 
 
 # This is the directory where collectstatic will copy all your static files.
-# STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+
 
 # This is the URL prefix used when referring to static files (CSS, JavaScript, images, etc.).
 
