@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-3$-)&3ao8*jf$l6y$=f%fm8$u!sxwbv1#2e8cu@ns+20glsj*6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['3.108.11.221', 'localhost']
+ALLOWED_HOSTS = ['65.2.38.146', 'localhost']
+# ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -101,13 +102,17 @@ WSGI_APPLICATION = 'Usbot.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'USBOT', 
-        # nginex
-        'NAME': 'usbot',
+        'NAME': 'USBOT', 
         'USER': 'ammu',
         'PASSWORD': '123',
         'HOST': 'localhost', 
-        'PORT': '',
+        'PORT': '5432',
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'NAME': 'USBOT', 
+        # 'USER': 'ammu',
+        # 'PASSWORD': '123',
+        # 'HOST': '127.0.0.1', 
+        # 'PORT': '5432',
     }
 }
 
@@ -146,7 +151,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
 
 
 
@@ -158,6 +162,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+TAILWIND_APP_NAME = 'theme'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -168,10 +175,8 @@ MEDIA_URL = '/media/'
 # STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 # This is the URL prefix used when referring to static files (CSS, JavaScript, images, etc.).
-STATIC_URL = '/static/'
-import os
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-TAILWIND_APP_NAME = 'theme'
+
+
 
 
 AUTH_USER_MODEL = 'Store.UserProfile'
