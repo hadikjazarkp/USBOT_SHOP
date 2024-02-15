@@ -104,7 +104,7 @@
 
                   
                     {% comment %} <button id="pay_pal"  class="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-full">PayPal</button> {% endcomment %}
-                    <button id="stripeButton" data-target="#stripeModal" type="button" class="py-2 px-4 bg-green-500 hover:bg-blue-700 text-white font-bold">Stripe</button>
+                    <button id="stripeButton" onclick="setpayment_mode('stripe')"  data-target="#stripeModal" type="button" class="py-2 px-4 bg-green-500 hover:bg-blue-700 text-white font-bold">Stripe</button>
 
                     <button id="cash_on_deliver" onclick="setpayment_mode('cash_on_delivery')" type="submit" class="py-2 px-4 bg-green-500 hover:bg-blue-700 text-white font-bold ">Cash on Delivery</button>
                       <button id="rzp-button1"  type="submit" class=" py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold  ">Razorpay</button>
@@ -339,6 +339,7 @@
       <span class="close text-3xl font-bold cursor-pointer absolute top-0 right-0 p-4" onclick="closeModal()">&times;</span>
       <h2 class="text-2xl font-bold mb-4">Buy for $5.00</h2>
       <form action="{% url 'charge' %}" method="post">
+        {% csrf_token %}
           <script src="https://checkout.stripe.com/checkout.js" class="stripe-button" 
              data-key="{{ key }}"
              data-description="Payment Gateway"

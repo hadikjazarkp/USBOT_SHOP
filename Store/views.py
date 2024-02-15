@@ -47,7 +47,9 @@ def shop(request):
     search_key = request.GET.get('search')
         
     
-    
+    image = Image.objects.first()  # Get the first image object from the database
+    image_url = image.image.url if image else None  # Get the URL of the image if available
+
     
     
     
@@ -72,6 +74,7 @@ def shop(request):
         'category':category,
         'sub_category' : sub_category,
         'products' :products,
+        'image_url': image_url,
         }
     return render(request, "store/shop.html", context)
 
@@ -482,9 +485,9 @@ def edit_profile(request):
 
 def charge(request):
     if request.method == 'POST':
-        try:
+        
             # Set your Stripe secret key
-            stripe.api_key = 'your_stripe_secret_key'
+            stripe.api_key = settings.STRIPE_SECRET_KEY
 
             # Create a charge
             charge = stripe.Charge.create(
@@ -497,15 +500,15 @@ def charge(request):
             # If the charge was successful, return a success message
             return JsonResponse({'message': 'Payment successful!'})
 
-        except stripe.error.CardError as e:
-            # The card has been declined
-            return JsonResponse({'error_message': str(e)}, status=400)
-        except Exception as e:
-            # An error occurred during the payment process
-            return JsonResponse({'error_message': str(e)}, status=500)
+        # except stripe.error.CardError as e:
+        #     # The card has been declined
+        #     return JsonResponse({'error_message fff': str(e)}, status=400)
+        # except Exception as e:
+        #     # An error occurred during the payment process
+        #     return JsonResponse({'error_message fdt': str(e)}, status=500)
 
     # Handle cases where the request method is not POST
-    return JsonResponse({'error_message': 'Invalid request method'}, status=400)
+    return JsonResponse({'error_messagedghgh': 'Invalid request method'}, status=400)
 
         
     

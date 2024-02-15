@@ -29,7 +29,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('Store.urls')),
     path('',include('wishlist.urls')),
- 
     path('ckeditor/', include("ckeditor_uploader.urls")),
 
     
