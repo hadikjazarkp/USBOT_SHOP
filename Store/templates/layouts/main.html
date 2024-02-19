@@ -203,7 +203,7 @@
             
 
                 <!-- Cart -->
-                {% if user.is_authenticated %}
+                {% if request.user.is_authenticated %}
                 <div class="ml-auto">
                   <div class="relative group">
                     <a href="{% url 'wishlist_view' %}" class="text-gray-600 hover:text-gray-900">
