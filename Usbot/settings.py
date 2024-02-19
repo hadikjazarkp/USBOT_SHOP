@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['13.201.217.139', 'localhost','127.0.0.1','www.usbot.shop']
 # ALLOWED_HOSTS = []
 
+CROSS_ORGIN = ['https://www.usbot.shop']
 
 # Application definition
 
