@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3$-)&3ao8*jf$l6y$=f%fm8$u!sxwbv1#2e8cu@ns+20glsj*6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['13.201.217.139', 'localhost','127.0.0.1']
+ALLOWED_HOSTS = ['13.201.217.139', 'localhost','127.0.0.1','www.usbot.shop']
 # ALLOWED_HOSTS = []
 
 
@@ -108,12 +108,12 @@ DATABASES = {
         'PASSWORD': '123',
         'HOST': 'localhost', 
         'PORT': '',
-        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'USBOT', 
-        # 'USER': 'ammu',
-        # 'PASSWORD': '123',
-        # 'HOST': '127.0.0.1', 
-        # 'PORT': '5432',
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': 'USBOT', 
+    #     'USER': 'ammu',
+    #     'PASSWORD': '123',
+    #     'HOST': '127.0.0.1', 
+    #     'PORT': '5432',
     }
 }
 
