@@ -203,6 +203,7 @@
             
 
                 <!-- Cart -->
+                {% if user.is_authenticated %}
                 <div class="ml-auto">
                   <div class="relative group">
                     <a href="{% url 'wishlist_view' %}" class="text-gray-600 hover:text-gray-900">
@@ -210,14 +211,14 @@
                         <span class="absolute -top-2 -right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs">{{user.wishlist.all|length}}</span>
                     </a>
                   </div>
-                  </div>
+                </div>
                 <div class="relative group">
                     <a href="{% url "cart_page" %}" class="text-gray-600 hover:text-gray-900">
                         <img src="{% static 'shopping-cart.png' %}" alt="Profile Image" class=" h-7 w-7">
                            <span class="absolute -top-2 -right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs">{{user.cart.all|length}}</span>
                     </a>
                 </div>
-
+                {% endif %}
 
                 {% if request.user.is_authenticated %}
                     <!-- Dropdown Button -->
