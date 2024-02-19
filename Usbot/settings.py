@@ -28,8 +28,9 @@ DEBUG = True
 ALLOWED_HOSTS = ['13.201.217.139', 'localhost','127.0.0.1','www.usbot.shop']
 # ALLOWED_HOSTS = []
 
-CORS_ORGIN = ['https://www.usbot.shop']
-
+CSRF_TRUSTED_ORIGINS = [
+    'https://www.usbot.shop',  # Add your trusted origin here
+]
 # Application definition
 
 INSTALLED_APPS = [
