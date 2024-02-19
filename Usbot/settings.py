@@ -108,12 +108,12 @@ DATABASES = {
         'PASSWORD': '123',
         'HOST': 'localhost', 
         'PORT': '',
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'USBOT', 
-    #     'USER': 'ammu',
-    #     'PASSWORD': '123',
-    #     'HOST': '127.0.0.1', 
-    #     'PORT': '5432',
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'NAME': 'USBOT', 
+        # 'USER': 'ammu',
+        # 'PASSWORD': '123',
+        # 'HOST': '127.0.0.1', 
+        # 'PORT': '5432',
     }
 }
 

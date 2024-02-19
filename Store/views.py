@@ -166,12 +166,16 @@ def cart_count_decrease(request, id):
      
 @login_required(login_url='loginpage')  # Specify the login URL
 def add_to_cart(request, slug ):
-    print(slug)
+    print("fghnh")
+    
     variant = Variant.objects.get(slug=slug)
     cart_iteam = Cart.objects.get_or_create(variant=variant, user=request.user)
     return redirect('cart_page')
 
+
+@login_required(login_url='loginpage')
 def add_to_cart_button(request, slug):
+    print("5uktytj")
     try:
         variant = Variant.objects.get(slug=slug)
         cart_item, created = Cart.objects.get_or_create(variant=variant, user=request.user)

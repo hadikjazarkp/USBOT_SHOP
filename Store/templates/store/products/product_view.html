@@ -112,8 +112,15 @@
                                 <button class="w-full bg-black dark:bg-gray-400 py-2 px-4 rounded-full font-bold hover:bg-gray-600 dark:hover:bg-gray-700 border border-black text-white">Add to cart</button>
 
                               </a>  {% endcomment %}
+                              {% if user.is_authenticated %}
                               <button id="add-to-cart-button" data-slug="{{ variant.slug }}" class="w-full bg-black dark:bg-gray-400 py-2 px-4 rounded-full font-bold hover:bg-gray-600 dark:hover:bg-gray-700 border border-black text-white">Add to cart</button>
 
+                              {% else %}
+
+                              <a href="{% url 'loginpage' %}" class="block w-full bg-black dark:bg-gray-400 py-2 px-4 rounded-full font-bold hover:bg-gray-600 dark:hover:bg-gray-700 border border-black text-white text-center">Add to cart</a>
+
+                              {% endif %}
+                              
                               
                             {% else  %}
 
@@ -130,10 +137,15 @@
                           </div> {% endcomment %}
                             
                         <div class="w-1/2 px-2">
-                          {% comment %} <form method="post" action="{% url 'add_to_wishlist' slug=variant.product.slug %}"> {% endcomment %}
-                            {% csrf_token %}
+                          {% if user.is_authenticated %}
                             <button id="add-to-wishlist-button" data-slug="{{ variant.product.slug }}" class="w-full bg-white dark:bg-white py-2 px-4 rounded-full font-bold hover:bg-gray-400 dark:hover:bg-gray-300 border border-black">Add to wishlist</button>     
-                          {% comment %} </form> {% endcomment %}
+                            {% else %}
+
+                            <a href="{% url 'loginpage' %}" class="block w-full bg-white dark:bg-white py-2 px-4 rounded-full font-bold hover:bg-gray-400 dark:hover:bg-gray-300 border border-black text-center">Add to wishlist</a>
+
+                            {% endif %}
+
+
                         </div>
                 </div>
             
