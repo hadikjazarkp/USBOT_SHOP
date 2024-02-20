@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-3$-)&3ao8*jf$l6y$=f%fm8$u!sxwbv1#2e8cu@ns+20glsj*6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['13.201.217.139', 'localhost','127.0.0.1','www.usbot.shop']
 # ALLOWED_HOSTS = []
@@ -104,18 +104,18 @@ WSGI_APPLICATION = 'Usbot.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'usbot', 
-        # 'USER': 'ammu',
-        # 'PASSWORD': '123',
-        # 'HOST': 'localhost', 
-        # 'PORT': '',
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'USBOT', 
+        'NAME': 'usbot', 
         'USER': 'ammu',
         'PASSWORD': '123',
-        'HOST': '127.0.0.1', 
-        'PORT': '5432',
+        'HOST': 'localhost', 
+        'PORT': '',
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'NAME': 'USBOT', 
+        # 'USER': 'ammu',
+        # 'PASSWORD': '123',
+        # 'HOST': '127.0.0.1', 
+        # 'PORT': '5432',
     }
 }
 
