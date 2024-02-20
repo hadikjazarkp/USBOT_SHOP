@@ -104,18 +104,18 @@ WSGI_APPLICATION = 'Usbot.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'usbot', 
-        'USER': 'ammu',
-        'PASSWORD': '123',
-        'HOST': 'localhost', 
-        'PORT': '',
         # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'USBOT', 
+        # 'NAME': 'usbot', 
         # 'USER': 'ammu',
         # 'PASSWORD': '123',
-        # 'HOST': '127.0.0.1', 
-        # 'PORT': '5432',
+        # 'HOST': 'localhost', 
+        # 'PORT': '',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'USBOT', 
+        'USER': 'ammu',
+        'PASSWORD': '123',
+        'HOST': '127.0.0.1', 
+        'PORT': '5432',
     }
 }
 
