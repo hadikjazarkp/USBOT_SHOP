@@ -2,7 +2,7 @@
 {% block profile %}
 
 
-<div class="container mx-auto my-3">
+{% comment %} <div class="container mx-auto my-3">
     <div class="grid grid-cols-1">
       <div class="col-span-1">
         <div class="bg-white shadow-lg p-2">
@@ -41,6 +41,71 @@
     </div>
   </div>
   
-  
+   {% endcomment %}
 
+
+   <div class="container mx-auto my-3">
+    <div class="grid grid-cols-1">
+      <div class="col-span-1">
+        <div class="bg-white shadow-lg p-2">
+          <div class=" p-4">
+            <h3 class="text-2xl font-semibold">My Order</h3>
+          </div>
+          <hr>
+          <div class="mt-4">
+            <table class="w-full">
+              <thead>
+                <tr>
+                  <th class="border p-2">Order Date</th>
+                  <th class="border p-2">Tracking No</th>
+                  <th class="border p-2">Total Price</th>
+                  <th class="border p-2">Status</th>
+                  <th class="border p-2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in orders %}
+                  <tr>
+                    <td class="border p-2">{{ item.created_at }}</td>
+                    <td class="border p-2">{{ item.tracking_no }}</td>
+                    <td class="border p-2">{{ item.total_price }}</td>
+                    <td class="border p-2">{{ item.status }}</td>
+                    <td class="border p-2">
+                      <a class="bg-blue-500 text-white px-4 py-2 rounded" href="{% url 'orderview' item.tracking_no %}">View</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <div >
+            <!-- Pagination -->
+            {% if orders.has_other_pages %}
+              <ul class="pagination flex ">
+                {% if orders.has_previous %}
+                  <li class="m-2"> <a href="?page=1">&laquo;</a></li>
+                {% else %}
+                  <li class="disabled m-2"><span>&laquo;</span></li>
+                {% endif %}
+                {% for i in orders.paginator.page_range %}
+                  {% if orders.number == i %}
+                    <li class="active m-2"><span>{{ i }}</span></li>
+                  {% else %}
+                    <li class="m-2"><a href="?page={{ i }}">{{ i }}</a></li>
+                  {% endif %}
+                {% endfor %}
+                {% if orders.has_next %}
+                  <li class="m-2"><a href="?page={{ orders.paginator.num_pages }}">&raquo;</a></li>
+                {% else %}
+                  <li class="disabled m-2"><span>&raquo;</span></li>
+                {% endif %}
+              </ul>
+            {% endif %}
+          </div>
+            <!-- End Pagination -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 {% endblock profile %}

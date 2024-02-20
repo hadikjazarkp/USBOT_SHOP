@@ -7,7 +7,8 @@ from django.urls import reverse
 from Store.models import UserProfile
 from Store.forms import CustomUserForm
 from django.utils.http import urlsafe_base64_decode,urlsafe_base64_encode
-
+from django.views.decorators.cache import cache_control
+from django.utils.decorators import method_decorator
 from django.core.cache import cache
 import hashlib
 import random
@@ -110,7 +111,7 @@ class ResendOTP(View):
             return redirect("otp", key=key)
         return redirect("register")
 
-
+@method_decorator(cache_control(no_cache=True, max_age=0), name='dispatch')
 class SignIn(View):
     def get(self, request):
 

@@ -6,7 +6,7 @@
 
 
 
-<div class="container mx-auto my-3">
+{% comment %} <div class="container mx-auto my-3">
   <div class="grid grid-cols-1">
     <div class="col-span-1">
       <div class="bg-white shadow-lg p-2">
@@ -43,8 +43,71 @@
       </div>
     </div>
   </div>
+</div> {% endcomment %}
+
+<!-- Data container -->
+<div id="data-container" class="mb-8">
+  <!-- Display your paginated data here -->
 </div>
 
+<!-- Pagination container -->
+<div id="pagination-container" class="flex justify-center space-x-2"></div>
+
+<script>
+  // Sample data, replace this with your actual data
+  const orderData = {% raw %}{{ order }}{% endraw %};
+  const itemsPerPage = 5;
+  let currentPage = 1;
+
+  // Function to display paginated data
+  function displayData(startIndex, endIndex) {
+    const dataContainer = document.getElementById('data-container');
+    dataContainer.innerHTML = '';
+
+    for (let i = startIndex; i <= endIndex; i++) {
+      const item = orderData[i];
+      if (item) {
+        // Display your data here
+        const row = `
+          <tr>
+            <td class="border p-2">${item.created_at}</td>
+            <td class="border p-2">${item.tracking_no}</td>
+            <td class="border p-2">${item.total_price}</td>
+            <td class="border p-2">${item.status}</td>
+            <td class="border p-2">
+              <a class="bg-blue-500 text-white px-4 py-2 rounded" href="{% url 'orderview' item.tracking_no %}">View</a>
+            </td>
+          </tr>
+        `;
+        dataContainer.innerHTML += row;
+      }
+    }
+  }
+
+  // Function to update pagination buttons
+  function updatePagination() {
+    const paginationContainer = document.getElementById('pagination-container');
+    paginationContainer.innerHTML = '';
+
+    const totalPages = Math.ceil(orderData.length / itemsPerPage);
+
+    for (let i = 1; i <= totalPages; i++) {
+      const button = document.createElement('button');
+      button.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded';
+      button.textContent = i;
+      button.addEventListener('click', () => {
+        currentPage = i;
+        updatePagination();
+        displayData((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1);
+      });
+      paginationContainer.appendChild(button);
+    }
+  }
+
+  // Initial setup
+  displayData(0, itemsPerPage - 1);
+  updatePagination();
+</script>
 
 
 

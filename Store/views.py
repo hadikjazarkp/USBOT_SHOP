@@ -16,12 +16,13 @@ from django.http import HttpResponse
 import random
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
 
 
 
 from django.shortcuts import render
 from .models import Main_Images, Category, Product
-
+@cache_control(no_cache=True, no_store=False)
 def home(request):
     main_images = Main_Images.objects.first()
     category = Category.objects.all()
@@ -143,10 +144,19 @@ def cart(request):
       
      
 def cart_count_increase(request, id):
-    
     cart_item = Cart.objects.get(id=id)
-    cart_item.variant_qty += 1
-    cart_item.save()
+    print(cart_item.variant.quantity)
+    if cart_item.variant_qty < 10:
+        if cart_item.variant.quantity > cart_item.variant_qty:
+            cart_item.variant_qty += 1
+            cart_item.save()
+        else:
+            messages.error(request,"Out of Stock")    
+   
+    else:
+        messages.error(request,"Only 10 Iteams can be added")    
+        
+  
     return redirect('cart_page')     
      
      
@@ -400,59 +410,71 @@ def placeorder(request):
     if request.method == 'POST':
         # neworder = Order()
         # neworder.user = request.user
+        try:
+            address = request.POST.get('selectedAddressId').strip()
+            address = Address.objects.get(id=address)
         
-        address = request.POST.get('selectedAddressId').strip()
-        address = Address.objects.get(id=address)
         
-        
-        payment_mode = request.POST.get('payment_mode')
-        total_price = request.POST.get('finalTotal')
-        coupon=request.POST.get('discount_price')
-        print(coupon)
-        # # Ensure that the tracking number is unique
-        trackno = 'usbot' + str(random.randint(1111111, 9999999))
-        while UserOrder.objects.filter(tracking_no=trackno).exists():
+            payment_mode = request.POST.get('payment_mode')
+            total_price = request.POST.get('finalTotal')
+            coupon=request.POST.get('discount_price')
+            print(coupon)
+            # # Ensure that the tracking number is unique
             trackno = 'usbot' + str(random.randint(1111111, 9999999))
-        
-        # neworder.tracking_no = trackno
-        # neworder.save()
-        neworder= UserOrder.objects.create(user=request.user,address=address,total_price=total_price,payment_mode=payment_mode,tracking_no=trackno)
-        neworderitems = Cart.objects.filter(user=request.user)
-        print(total_price)
-        for item in neworderitems:
-            UserOrderItem.objects.create(
-                order=neworder,
-                variant=item.variant,
-                quantity=item.variant_qty,
-                price=item.variant.selling_price,
-                total=total_price,
-                coupon=coupon
-                
-            )    
-
-            # To decrease the product quantity from available stock
-            orderproduct = Variant.objects.get(id=item.variant.id)
-            orderproduct.quantity = orderproduct.quantity - item.variant_qty
-            orderproduct.save()
+            while UserOrder.objects.filter(tracking_no=trackno).exists():
+                trackno = 'usbot' + str(random.randint(1111111, 9999999))
             
-        # To clear user Cart
-        Cart.objects.filter(user=request.user).delete()  
-        
-        messages.success(request, "Your order has been placed successfully")  
+            # neworder.tracking_no = trackno
+            # neworder.save()
+            neworder= UserOrder.objects.create(user=request.user,address=address,total_price=total_price,payment_mode=payment_mode,tracking_no=trackno)
+            neworderitems = Cart.objects.filter(user=request.user)
+            print(total_price)
 
-    return redirect('home')
+            for item in neworderitems:
+                UserOrderItem.objects.create(
+                    order=neworder,
+                    variant=item.variant,
+                    quantity=item.variant_qty,
+                    price=item.variant.selling_price,
+                    total=total_price,
+                    coupon=coupon
+                    
+                )    
+
+                # To decrease the product quantity from available stock
+                orderproduct = Variant.objects.get(id=item.variant.id)
+                orderproduct.quantity = orderproduct.quantity - item.variant_qty
+                orderproduct.save()
+                Cart.objects.filter(user=request.user).delete()  
+        
+                messages.success(request, "Your order has been placed successfully")  
+
+                return redirect('home')
+        except:
+            messages.error(request, "Please add atleast one address")
+            return redirect(request.META.get('HTTP_REFERER', '/'))
+                
+
+        # To clear user Cart
+
 
 
 def profile_view(request):
     
     return render(request, 'store/auth/profile.html',)
     
+from django.core.paginator import Paginator
 
 def profile_order(request):
     orders = UserOrder.objects.filter(user=request.user)
 
-    context = { 'order':orders }
-    return render(request, 'store/auth/order.html', context)    
+    # Pagination
+    paginator = Paginator(orders, 5)  # Show 5 orders per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {'orders': page_obj}
+    return render(request, 'store/auth/order.html', context)
 
 
 def profile_address(request):

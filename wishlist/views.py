@@ -3,6 +3,7 @@ from django.views import View
 from .models import *
 from Store.models import *
 from django.http import JsonResponse
+from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 
 # Create your views here.
@@ -31,6 +32,7 @@ class AddToWishlistView(View):
         wishlist, created = WishlistModel.objects.get_or_create(user=request.user,product=product)
         print(wishlist)
         # wishlist.product.add(product)
+        messages.success(request, "Your Add to Wishlist has been successfully")
         return redirect('wishlist_view')
 
 class RemoveFromWishlistView(View):
