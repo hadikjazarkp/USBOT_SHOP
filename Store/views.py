@@ -69,7 +69,8 @@ def shop(request):
     if category_by:
         products = products.filter(sub_category__category__slug = category_by)  
     if search_key:
-        products = Product.objects.filter( Q(variants__color__istartswith=search_key) | Q(name__istartswith=search_key) | Q(sub_category__category__name__istartswith=search_key) | Q(sub_category__name__istartswith=search_key) )      
+        products = Product.objects.filter( Q(variants__color__istartswith=search_key) | Q(name__istartswith=search_key) | Q(sub_category__category__name__istartswith=search_key) | Q(sub_category__name__istartswith=search_key) ) 
+        # products = [product.variants.first() for product in products]   
    
     context = {
         'category':category,
