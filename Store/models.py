@@ -103,6 +103,9 @@ class Address(models.Model):
     phone_number = models.CharField(max_length=10)
     pincode = models.IntegerField()
     
+    def __str__(self):
+        return f" {self.first_name}  {self.address}  {self.city}"
+    
  
  
 class CustomUserManager(UserManager):
@@ -193,6 +196,8 @@ class Color_Image(models.Model):
     variant = models.ForeignKey(Variant, on_delete=models.CASCADE, related_name="colorimages")
     variantimg = models.ImageField(validators=[validate_image_type] )
     
+    def __str__(self):
+        return self.variantimg
 
  
 
@@ -253,7 +258,7 @@ class UserOrder(models.Model):
     update_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return '{} - {}'.format(self.id, self.tracking_no)
+        return '{} - {}'.format(self.id, self.tracking_no,)
      
     
 class UserOrderItem(models.Model):
@@ -264,8 +269,8 @@ class UserOrderItem(models.Model):
     total = models.CharField(max_length=250)
     coupon=models.CharField(max_length=250,null=True)
     
-    # def __str__(self):
-    #     return '{} - {}'.format(self.order.id, self.order.tracking_no)
+    def __str__(self):
+        return '{} - {}'.format(self.order.id, self.order.tracking_no)
          
          
 

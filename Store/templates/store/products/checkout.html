@@ -268,21 +268,7 @@
             <!-- Address Table -->
             <div class="grid grid-cols-1 gap-4">
               {% for address in user_address %}
-              {% comment %} <div class="border p-4 hover:bg-gray-100 cursor-pointer" onclick="selectAddress('{{ address.id }}')">
-                <input class="hidden form-radio addresscheck" type="radio" name="address" value="{{ address.id }}" id="user_address_{{ address.id }}" {% if forloop.first %}checked{% endif %}>
-                <label class="ml-2 cursor-pointer select-none block">
-                  <div id="selectedAddressDetails_{{ address.id }}" class="address-details">
-                    <p data-name="Address"><strong>Address:</strong> {{ address.address }}</p>
-                    <p data-name="Name"><strong>Name:</strong> {{ address.first_name }}</p>
-                    <p data-name="State"><strong>State:</strong> {{ address.state }}</p>
-                    <p data-name="City"><strong>City:</strong> {{ address.city }}</p>
-                    <p data-name="Pin Code"><strong>Pin Code:</strong> {{ address.pincode }}</p>
-                    <p data-name="Phone number"><strong>Phone number:</strong> {{ address.phone_number }}</p>
-                     <hr class="my-4">
-                  </div>
-                </label>
-              </div> {% endcomment %}
-              <div class="border p-4 hover:bg-gray-100 cursor-pointer" onclick="selectAddress('{{ address.id }}')" id="address_{{ address.id }}">
+              <div class="border p-4 hover:bg-gray-100 cursor-pointer" onclick="selectAddress('{{ address.id }}')">
                 <input class="hidden form-radio addresscheck" type="radio" name="address" value="{{ address.id }}" id="user_address_{{ address.id }}" {% if forloop.first %}checked{% endif %}>
                 <label class="ml-2 cursor-pointer select-none block">
                     <div id="selectedAddressDetails_{{ address.id }}" class="address-details">
@@ -296,12 +282,28 @@
                     </div>
                 </label>
             </div>
+            <input type="hidden" id="selectedAddressId" name="selectedAddressId">
+            
+              {% comment %} <div class="border p-4 hover:bg-gray-100 cursor-pointer" onclick="selectAddress('{{ address.id }}')" id="address_{{ address.id }}">
+                <input class="hidden form-radio addresscheck" type="radio" name="address" value="{{ address.id }}" id="user_address_{{ address.id }}" {% if forloop.first %}checked{% endif %}>
+                <label class="ml-2 cursor-pointer select-none block">
+                    <div id="selectedAddressDetails_{{ address.id }}" class="address-details">
+                        <p data-name="Address"><strong>Address:</strong> {{ address.address }}</p>
+                        <p data-name="Name"><strong>Name:</strong> {{ address.first_name }}</p>
+                        <p data-name="State"><strong>State:</strong> {{ address.state }}</p>
+                        <p data-name="City"><strong>City:</strong> {{ address.city }}</p>
+                        <p data-name="Pin Code"><strong>Pin Code:</strong> {{ address.pincode }}</p>
+                        <p data-name="Phone number"><strong>Phone number:</strong> {{ address.phone_number }}</p>
+                        <hr class="my-4">
+                    </div>
+                </label>
+            </div> {% endcomment %}
             
               {% endfor %}
             </div>
 
               <!-- Close Modal Button -->
-              <button id="closeModalContent" class="bg-gray-500 text-white p-2 mt-4 w-full rounded" onclick="handleCloseModal()">Close Modal</button>
+              <button id="closeModalContent" class="bg-gray-500 text-white p-2 mt-4 w-full rounded" onclick="handleCloseModal()">Change address</button>
               <!-- Trigger button for Promo Modal -->
             
           </div>
@@ -561,6 +563,15 @@
         rzp1.open();
         e.preventDefault();
     }
+
+    function handleWebhookEvent(eventData) {
+      // Handle webhook event
+      if (eventData.event === 'payment.captured') {
+        // Payment captured, take appropriate action
+        // For example, update UI or trigger further processing
+        console.log("Payment captured", eventData);
+      }
+    }
     </script> 
 
 
@@ -592,44 +603,38 @@
       const initiallyCheckedRadio = document.querySelector("input[name='address']:checked");
   
       if (initiallyCheckedRadio) {
-        const radioLabel = initiallyCheckedRadio.nextElementSibling;
-        selectedAddress.innerHTML = radioLabel.innerHTML;
+          updateAddress(initiallyCheckedRadio);
       }
-    });
+  });
   
-    function updateAddress() {
-      
-      const selectedRadio = document.querySelector("input[name='address']:checked");
+  function updateAddress(selectedRadio) {
       const radioLabel = selectedRadio.nextElementSibling;
       const selectedAddress = document.getElementById('selectedAddress');
       selectedAddress.innerHTML = radioLabel.innerHTML;
-     
-
-      updateHiddenInput(selectedRadio); // Call updateHiddenInput to update the hidden input field
-    }
   
-    
-    function selectAddress(addressId) {
+      updateHiddenInput(selectedRadio); // Call updateHiddenInput to update the hidden input field
+  }
+  
+  function selectAddress(addressId) {
       // Remove border from previously selected address, if any
-      var prevSelected = document.querySelector('.border-blue-500');
+      const prevSelected = document.querySelector('.border-blue-500');
       if (prevSelected) {
           prevSelected.classList.remove('border', 'border-blue-500');
       }
-      
+  
       // Add border to the newly selected address
-      var selectedAddress = document.getElementById('address_' + addressId);
+      const selectedAddress = document.getElementById('selectedAddressDetails_' + addressId);
       selectedAddress.classList.add('border', 'border-blue-500');
   
       // Update the hidden address value
-      var radio = document.getElementById('user_address_' + addressId);
-      var hiddenAddress = document.getElementById("selectedAddressId");
+      const radio = document.getElementById('user_address_' + addressId);
+      const hiddenAddress = document.getElementById("selectedAddressId");
       hiddenAddress.value = radio.value;
   
-      // Call the updateAddress function if it's defined
-      if (typeof updateAddress === 'function') {
-          updateAddress();
-      }
+      // Call the updateAddress function to update the displayed address
+      updateAddress(radio);
   }
+  
   
   </script>
   
