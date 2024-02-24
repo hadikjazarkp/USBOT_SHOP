@@ -76,17 +76,21 @@
                           <p class="text-sm font-medium text-gray-900">Subtotal</p>
                           <p class="font-semibold text-gray-900"> ₹ {{ cart_total }}</p>
                       </div>
+                     <div class="flex items-center justify-between">
+                       <p class="text-sm font-medium text-gray-900">Promocode</p>
+                       <p id="appliedPromoCode" class="font-semibold  text-green-400">-{{ appliedPromoCode }}-</p>
+                       <input type="hidden" name="discount_price" value="{{ appliedPromoCode }}">
+                     </div>
                       <div class="flex items-center justify-between">
                         <p class="text-sm font-medium text-gray-900">Discount</p>
-                        <p id="discountValue" class="font-semibold text-gray-900"> ₹ {{ discount_price }}</p>
+                        <p id="discountValue" class="font-semibold text-red-500"> ₹ {{ discount_price }}</p>
                         <input type="hidden" name="discount_price" value="{{ discount_price }}">
                     </div>
                       <div class="flex items-center justify-between">
                           <p class="text-sm font-medium text-gray-900">Shipping</p>
-                          <p class="font-semibold text-gray-400">FREE</p>
+                          <p class="font-semibold text-green-400">FREE</p>
                       </div>
                   </div>
-          
                   <div class="flex items-center justify-between border-b py-2">
                     <p class="text-sm font-medium text-gray-900">Total</p>
                     <p id="finalTotal" class="text-2xl font-semibold text-gray-900"> ₹ {{ final_price }}</p>
@@ -237,19 +241,8 @@
                         </div>
                         <input type="submit" class="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white" value="Save And Deliver Here" >
                       </form>
-
-                    
-            
             </div> 
-
-          
         </div>
-          
-          
-
-
-
-
       </div>
 
       <div>
@@ -367,6 +360,8 @@
   </div>
 </div> 
 
+
+
 <script>
   document.getElementById('stripeButton').addEventListener('click', openModal);
   
@@ -385,6 +380,7 @@
     
   promocode = document.getElementById('promoCode')  
   promocode.value=code
+  
 
   }
 
@@ -470,8 +466,7 @@
       closeModal();
     }
   });
-</script>
-<script>
+</script><script>
   function openPromoModal() {
       document.getElementById('promoModal').classList.remove('hidden');
   }
@@ -502,10 +497,13 @@
         data: formData,
         dataType: 'json',
         success: function(response) {
-            if ('discount' in response && 'finalTotal' in response) {
+            if ('discount' in response && 'finalTotal' in response && 'promocode_value' in response) {
                 const newDiscount = response.discount;
+                const promocodeValue = response.promocode_value;
                 $('#discountValue').text(`₹ ${newDiscount}`);
                 $('#finalTotal').text(`₹ ${response.finalTotal}`);
+                $('#appliedPromoCode').text(promocodeValue);
+                alert(promocodeValue)
             } else {
                 console.error('Invalid response format:', response);
                 alert('Error applying promo code. Please check and try again.');

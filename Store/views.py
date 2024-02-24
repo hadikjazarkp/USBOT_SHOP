@@ -264,121 +264,122 @@ def remove_from_cart(request, slug):
 
 
 
-# @login_required
-# def checkout(request):
-#     cart_items = Cart.objects.filter(user=request.user)
-#     cart_total = sum(item.total_price for item in cart_items)
-#     user_address = Address.objects.filter(user=request.user)
-
-#     final_price = cart_total
-
-#     promocodes = PromoCode.objects.filter(purchase_price__lte=cart_total)
-#     discount_price = 0
-
-#     if request.session.get('discount'):
-#         print("session price")
-#         discount_price = request.session.get('discount')
-#         del request.session['discount']
-#     else:
-#         print("not session")
-
-#     print(discount_price)
-#     final_price -= discount_price
-
-#     client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
-#     payment = client.order.create({'amount': final_price * 100, 'currency': 'INR', 'payment_capture': 1})
-#     item = cart_items.first()  # Assuming you are working with the first item in the cart
-#     item.rezor_pay_order_id = payment['id']
-#     item.save()
-
-#     # Add the Stripe publishable key to the context
-#     stripe_publishable_key = settings.STRIPE_PUBLISHABLE_KEY
-#     context = {
-#         'cart_items': cart_items,
-#         'cart_total': cart_total,
-#         'promocodes': promocodes,
-#         'user_address': user_address,
-#         'final_price': final_price,
-#         'discount_price': discount_price,
-#         'payment': payment,
-#         'key': stripe_publishable_key,
-#     }
-
-#     return render(request, 'store/products/checkout.html', context)
-
-from django.http import HttpResponseBadRequest
-from django.views.decorators.csrf import csrf_exempt
-import razorpay
-import json
-
-@csrf_exempt
+@login_required
 def checkout(request):
-    if request.method == 'POST':
-        # Parse the Razorpay webhook payload
-        raw_data = request.body.decode('utf-8')
-        payload = json.loads(raw_data)
+    cart_items = Cart.objects.filter(user=request.user)
+    cart_total = sum(item.total_price for item in cart_items)
+    user_address = Address.objects.filter(user=request.user)
 
-        # Verify the signature
-        client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
-        try:
-            client.utility.verify_webhook_signature(raw_data, request.headers['X-Razorpay-Signature'])
-        except razorpay.errors.SignatureVerificationError:
-            return HttpResponseBadRequest('Invalid signature')
+    final_price = cart_total
 
-        # Process the webhook event
-        event_type = payload['event']
-        if event_type == 'payment.captured':
-            # Payment captured, update your database or send email notifications
-            # Access relevant data from payload, such as payment ID, order ID, etc.
-            print("dghdgbdgb")
-            messages.success(request,"payment caputred")
-            
-        elif event_type == 'order.paid':
-            # Order paid, update your database or trigger fulfillment process
-            # Access relevant data from payload, such as order ID, amount, etc.
-            print("dgdsgbdgbdgbgndgfngnfgnfn")
-            messages.success(request,"hgdbdfgfb")
-        # Add more event handlers as needed
+    promocodes = PromoCode.objects.filter(purchase_price__lte=cart_total)
+    
+    discount_price = 0
 
-        return HttpResponse('Webhook received', status=200)
-
+    if request.session.get('discount'):
+        print("session price")
+        discount_price = request.session.get('discount')
+        del request.session['discount']
     else:
-        # Handle GET request for rendering checkout page
-        cart_items = Cart.objects.filter(user=request.user)
-        cart_total = sum(item.total_price for item in cart_items)
-        user_address = Address.objects.filter(user=request.user)
+        print("not session")
 
-        final_price = cart_total
+    print(discount_price)
+    final_price -= discount_price
 
-        promocodes = PromoCode.objects.filter(purchase_price__lte=cart_total)
-        discount_price = 0
+    client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
+    payment = client.order.create({'amount': final_price * 100, 'currency': 'INR', 'payment_capture': 1})
+    item = cart_items.first()  # Assuming you are working with the first item in the cart
+    item.rezor_pay_order_id = payment['id']
+    item.save()
 
-        if request.session.get('discount'):
-            discount_price = request.session.get('discount')
-            del request.session['discount']
+    # Add the Stripe publishable key to the context
+    stripe_publishable_key = settings.STRIPE_PUBLISHABLE_KEY
+    context = {
+        'cart_items': cart_items,
+        'cart_total': cart_total,
+        'promocodes': promocodes,
+        'user_address': user_address,
+        'final_price': final_price,
+        'discount_price': discount_price,
+        'payment': payment,
+        'key': stripe_publishable_key,
+    }
 
-        final_price -= discount_price
+    return render(request, 'store/products/checkout.html', context)
 
-        client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
-        payment = client.order.create({'amount': final_price * 100, 'currency': 'INR', 'payment_capture': 1})
-        item = cart_items.first()  # Assuming you are working with the first item in the cart
-        item.rezor_pay_order_id = payment['id']
-        item.save()
+# from django.http import HttpResponseBadRequest
+# from django.views.decorators.csrf import csrf_exempt
+# import razorpay
+# import json
 
-        # Add the Stripe publishable key to the context
-        stripe_publishable_key = settings.STRIPE_PUBLISHABLE_KEY
-        context = {
-            'cart_items': cart_items,
-            'cart_total': cart_total,
-            'promocodes': promocodes,
-            'user_address': user_address,
-            'final_price': final_price,
-            'discount_price': discount_price,
-            'payment': payment,
-            'key': stripe_publishable_key,
-        }
+# @csrf_exempt
+# def checkout(request):
+#     if request.method == 'POST':
+#         # Parse the Razorpay webhook payload
+#         raw_data = request.body.decode('utf-8')
+#         payload = json.loads(raw_data)
 
-        return render(request, 'store/products/checkout.html', context)
+#         # Verify the signature
+#         client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
+#         try:
+#             client.utility.verify_webhook_signature(raw_data, request.headers['X-Razorpay-Signature'])
+#         except razorpay.errors.SignatureVerificationError:
+#             return HttpResponseBadRequest('Invalid signature')
+
+#         # Process the webhook event
+#         event_type = payload['event']
+#         if event_type == 'payment.captured':
+#             # Payment captured, update your database or send email notifications
+#             # Access relevant data from payload, such as payment ID, order ID, etc.
+#             print("dghdgbdgb")
+#             messages.success(request,"payment caputred")
+            
+#         elif event_type == 'order.paid':
+#             # Order paid, update your database or trigger fulfillment process
+#             # Access relevant data from payload, such as order ID, amount, etc.
+#             print("dgdsgbdgbdgbgndgfngnfgnfn")
+#             messages.success(request,"hgdbdfgfb")
+#         # Add more event handlers as needed
+
+#         return HttpResponse('Webhook received', status=200)
+
+#     else:
+#         # Handle GET request for rendering checkout page
+#         cart_items = Cart.objects.filter(user=request.user)
+#         cart_total = sum(item.total_price for item in cart_items)
+#         user_address = Address.objects.filter(user=request.user)
+
+#         final_price = cart_total
+
+#         promocodes = PromoCode.objects.filter(purchase_price__lte=cart_total)
+#         discount_price = 0
+
+#         if request.session.get('discount'):
+#             discount_price = request.session.get('discount')
+#             del request.session['discount']
+
+#         final_price -= discount_price
+
+#         client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
+#         payment = client.order.create({'amount': final_price * 100, 'currency': 'INR', 'payment_capture': 1})
+#         item = cart_items.first()  # Assuming you are working with the first item in the cart
+#         item.rezor_pay_order_id = payment['id']
+#         item.save()
+
+#         # Add the Stripe publishable key to the context
+#         stripe_publishable_key = settings.STRIPE_PUBLISHABLE_KEY
+#         context = {
+#             'cart_items': cart_items,
+#             'cart_total': cart_total,
+#             'promocodes': promocodes,
+#             'user_address': user_address,
+#             'final_price': final_price,
+#             'discount_price': discount_price,
+#             'payment': payment,
+#             'key': stripe_publishable_key,
+#         }
+
+#         return render(request, 'store/products/checkout.html', context)
 
 def add_address(request):
     if request.method == 'POST':
@@ -434,17 +435,16 @@ def delete_address(request, address_id):
   
 def promocode_view(request):
     if request.method == 'POST':
-        
         # Retrieve the promo code value and cart total from the POST data
         promocode_value = request.POST.get('promocodevalue')
-        promocode_value=promocode_value.strip()
-        print("promocode value=",promocode_value)
-        promocode=PromoCode.objects.filter(code=promocode_value).first()
-        
-        disprice=promocode.discount_price
-        print(disprice)
+        promocode_value = promocode_value.strip()
+        print("promocode value =", promocode_value)
+        promocode = PromoCode.objects.filter(code=promocode_value).first()
+
+        disprice = promocode.discount_price
         cart_total_price = request.POST.get('cart_total')
-        print(cart_total_price,promocode_value)
+        print("cart total price =", cart_total_price)
+        
         # Validate if promo code value is provided
         if disprice is not None:
             try:
@@ -454,13 +454,15 @@ def promocode_view(request):
                 # Add your logic to calculate the final total based on the discount and cart total
                 calculated_final_total = float(cart_total_price) - discount
 
-                # Store the discount value in the session
+                # Store the discount value and promo code value in the session
                 request.session['discount'] = discount
-                 
-                # Prepare the response data
+                request.session['promocode_value'] = promocode_value
+                
+                # Prepare the response data including promocode_value
                 response_data = {
                     'discount': discount,
                     'finalTotal': calculated_final_total,
+                    'promocode_value': promocode_value,
                     # Add other necessary data
                 }
 
@@ -470,8 +472,8 @@ def promocode_view(request):
                 # Handle the case where the promo code value is not a valid float
                 return JsonResponse({'error': 'Invalid promo code value'})
         else:
-            # If no promo code value is provided, return an appropriate response
-            return JsonResponse({'error': 'No promo code value provided'})
+            # If no promo code value is provided or found, return an appropriate response
+            return JsonResponse({'error': 'Invalid promo code'})
     else:
         # Handle the case where the request method is not POST
         return JsonResponse({'error': 'Invalid request method'})
